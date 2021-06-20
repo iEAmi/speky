@@ -9,22 +9,22 @@ import io.kotest.matchers.string.shouldNotContain
 
 internal class ClassRefTest : FunSpec({
   test("name should not contains dot") {
-    val ref = ClassRef<String>("String", "kotlin.String")
+    val ref = ClassRef.invoke<String>()
     ref.name shouldNotContain "."
   }
 
   test("qualifiedName should contains dot") {
-    val ref = ClassRef<String>("String", "kotlin.String")
+    val ref = ClassRef.invoke<String>()
     ref.qualifiedName shouldContain "."
   }
 
   test("qualifiedName length should be greater that name") {
-    val ref = ClassRef<String>("String", "kotlin.String")
+    val ref = ClassRef.invoke<Int>()
     ref.qualifiedName.length shouldBeGreaterThan ref.name.length
   }
 
   test("toString should contains name and qualifiedName") {
-    val ref = ClassRef<String>("String", "kotlin.String")
+    val ref = ClassRef.invoke<String>()
     ref.toString() shouldContain ref.name
     ref.toString() shouldContain ref.qualifiedName
     ref.toString() shouldBe "ClassRef(name=${ref.name}, qualifiedName=${ref.qualifiedName})"
