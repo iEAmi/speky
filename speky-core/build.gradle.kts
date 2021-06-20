@@ -26,8 +26,16 @@ tasks.test {
   useJUnitPlatform()
 }
 
+
 tasks.jacocoTestReport {
   reports {
     xml.isEnabled = true
+  }
+}
+
+tasks.register("buildCoverage") {
+  dependsOn("build")
+  doLast {
+    tasks.jacocoTestReport.get().generate()
   }
 }
