@@ -25,22 +25,36 @@ dependencies {
   testImplementation("io.kotest:kotest-property:4.6.0")
 }
 
+tasks.register("buildCoverage") {
+  dependsOn(tasks.build)
+  doLast {
+    tasks.jacocoTestReport.get().generate()
+  }
+}
+
 tasks.test {
   useJUnitPlatform()
 }
 
-
 tasks.jacocoTestReport {
+  dependsOn(tasks.test)
   reports {
     xml.isEnabled = true
   }
 }
 
-tasks.register("buildCoverage") {
-  dependsOn("build")
-  doLast {
-    tasks.jacocoTestReport.get().generate()
+tasks.jacocoTestCoverageVerification {
+  violationRules {
+    rule {
+      limit {
+        minimum = "0.9".toBigDecimal()
+      }
+    }
   }
+}
+
+jacoco {
+  toolVersion = "0.8.7"
 }
 
 detekt {
