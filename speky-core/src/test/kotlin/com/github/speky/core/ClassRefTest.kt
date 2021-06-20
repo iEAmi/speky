@@ -27,13 +27,13 @@ internal class ClassRefTest : FunSpec({
     val ref = ClassRef<String>("String", "kotlin.String")
     ref.toString() shouldContain ref.name
     ref.toString() shouldContain ref.qualifiedName
-    ref.toString() shouldBe "ClassRef(name='${ref.name}', qualifiedName='${ref.qualifiedName}')"
+    ref.toString() shouldBe "ClassRef(name=${ref.name}, qualifiedName=${ref.qualifiedName})"
   }
 
   test("class should equals to itself") {
     val ref = ClassRef<String>("String", "kotlin.String")
     (ref == ref) shouldBe true
-    (ref.equals("")) shouldBe false
+    ref.equals("") shouldBe false
 
     (ref == ClassRef<String>("String", "kotlin.String")) shouldBe true
 
@@ -41,10 +41,10 @@ internal class ClassRefTest : FunSpec({
     (ref == ClassRef<String>(ref.name, "dd")) shouldBe false
 
     ref.hashCode() shouldBeEqualComparingTo ref.hashCode()
-    ref.hashCode() shouldBeEqualComparingTo (ClassRef<String>(
+    ref.hashCode() shouldBeEqualComparingTo ClassRef<String>(
       ref.name,
       ref.qualifiedName
-    ).hashCode())
+    ).hashCode()
   }
 
   test("invoke<String>() should return String CLassRef") {
