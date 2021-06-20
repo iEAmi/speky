@@ -45,6 +45,6 @@ tasks.register("buildCoverage") {
 
 detekt {
   toolVersion = "1.17.1"
-  config = files("detekt.yml")
+  config = files("../detekt.yml")
   buildUponDefaultConfig = true
 }
