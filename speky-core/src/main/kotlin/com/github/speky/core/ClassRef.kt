@@ -15,6 +15,11 @@ data class ClassRef<T> internal constructor(
   internal companion object {
 
     /**
+     * [Show] instance for [ClassRef].
+     */
+    internal val show: Show<ClassRef<*>> = Show { "$name @ $qualifiedName" }
+
+    /**
      * Invoke operator to create new instance of [ClassRef].
      *
      * @param T type of the class to create [ClassRef] for it

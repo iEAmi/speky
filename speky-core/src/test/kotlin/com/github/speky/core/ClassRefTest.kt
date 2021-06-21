@@ -53,4 +53,11 @@ internal class ClassRefTest : FunSpec({
     ref.name shouldBe "String"
     ref.qualifiedName shouldBe "kotlin.String"
   }
+
+  test("show should return name @ qualifiedName") {
+    val ref = ClassRef<Int>()
+    with(ClassRef.show) {
+      ref.show() shouldBe "Int @ kotlin.Int"
+    }
+  }
 })

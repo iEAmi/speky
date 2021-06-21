@@ -41,4 +41,12 @@ internal class PropertyRefTest : FunSpec({
       ClassRef<Any>()
     ).hashCode()
   }
+
+  test("show should return declaringClass.name") {
+    val ref = PropertyRef<String>("firstName", ClassRef<String>())
+
+    with(PropertyRef.show) {
+      ref.show() shouldBe "String.firstName"
+    }
+  }
 })

@@ -43,5 +43,33 @@ internal class LensTest : FunSpec({
     (lens.hashCode() == PropertyRef<Int>("name", ClassRef<String>()).hashCode()) shouldBe true
   }
 
-  test ("zoom")
+  test("zoom") {
+    val lensName = Lens.on<String, Int>("name")
+    val lensSize = Lens.on<Int, Long>("Size")
+
+    val lens = lensName zoom lensSize
+
+    lens.shouldBeInstanceOf<Lens.Zoom<Long, Int, String>>()
+
+    lens.propertyRef.name shouldBe "Size"
+    lens.propertyRef.classRef shouldBe ClassRef("Long", "kotlin.Long")
+    lens.propertyRef.declaringClassRef shouldBe ClassRef<Int>("Int", "kotlin.Int")
+
+    lens.declaringClassRef shouldBe ClassRef("Int", "kotlin.Int")
+  }
+
+  test("show") {
+    val lensName = Lens.on<String, Int>("name")
+
+    with(Lens.show) {
+      lensName.show() shouldBe "String.name"
+    }
+
+    val lensSize = Lens.on<Int, Long>("size")
+
+    val lens = lensName zoom lensSize
+    with(Lens.show) {
+      lens.show() shouldBe "String.name.size"
+    }
+  }
 })

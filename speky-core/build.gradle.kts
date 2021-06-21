@@ -1,6 +1,6 @@
 plugins {
   kotlin("jvm") version "1.5.10"
-  id("io.gitlab.arturbosch.detekt").version("1.17.1")
+  id("io.gitlab.arturbosch.detekt") version "1.17.1"
   `java-library`
   idea
   eclipse

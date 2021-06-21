@@ -42,6 +42,16 @@ sealed class Lens<R, T> private constructor(val propertyRef: PropertyRef<R>) {
   internal companion object {
 
     /**
+     * [Show] instance for [Lens].
+     */
+    internal val show: Show<Lens<*, *>> = object : Show<Lens<*, *>> {
+      override fun Lens<*, *>.show(): String = when (this) {
+        is Focus         -> with(PropertyRef.show) { propertyRef.show() }
+        is Zoom<*, *, *> -> left.show() + "." + right.propertyRef.name
+      }
+    }
+
+    /**
      * Factory method to create new instance of [Lens]. this is starting-point of the [Lens].
      *
      * @param name name of the property

@@ -17,6 +17,11 @@ data class PropertyRef<T> internal constructor(
   internal companion object {
 
     /**
+     * [Show] instance for [PropertyRef].
+     */
+    internal val show: Show<PropertyRef<*>> = Show { "${declaringClassRef.name}.$name" }
+
+    /**
      * Invoke operator to create new Instance of the [PropertyRef].
      *
      * @param name name of the property
