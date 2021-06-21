@@ -5,14 +5,14 @@ package com.github.speky.core
  *
  * @property name name of the property
  * @property classRef [ClassRef] of the property type
- * @property declaringClass [ClassRef] of the class that property belongs to that
+ * @property declaringClassRef [ClassRef] of the class that property belongs to that
  *
  * @param T type of the property
  */
 data class PropertyRef<T> internal constructor(
   val name: String,
   val classRef: ClassRef<T>,
-  val declaringClass: ClassRef<*>,
+  val declaringClassRef: ClassRef<*>,
 ) {
   internal companion object {
 

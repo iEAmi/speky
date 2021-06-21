@@ -23,7 +23,7 @@ internal class PropertyRefTest : FunSpec({
     val ref = PropertyRef<String>("firstName", ClassRef<String>())
     ref.toString() shouldContain ref.name
     ref.toString() shouldContain ref.classRef.toString()
-    ref.toString() shouldContain ref.declaringClass.toString()
+    ref.toString() shouldContain ref.declaringClassRef.toString()
   }
 
   test("equals and hashCode") {
