@@ -106,4 +106,15 @@ internal class SourceTest : FunSpec({
     ordered.delegate shouldBe spec
     ordered.alias shouldBe spec.alias
   }
+
+  test("Source.Single.filter() should return Filtered") {
+    val spec = Specification.from<Int>("0").select()
+    val filtered = spec.filter(Filter.eq(Lens.on("name"), "u"))
+
+    filtered.shouldBeInstanceOf<Filtered<Int, String>>()
+    filtered.filter.lens shouldBe Order.asc(Lens.on<Int, String>("name")).lens
+    filtered.classRef shouldBe spec.classRef
+    filtered.delegate shouldBe spec
+    filtered.alias shouldBe spec.alias
+  }
 })
