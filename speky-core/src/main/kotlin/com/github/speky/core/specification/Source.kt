@@ -25,38 +25,44 @@ sealed class Source<T> private constructor(override val alias: Alias<T>) : Speci
    */
   class Single<T>(alias: Alias<T>) : Source<T>(alias) {
 
-    //    inline fun <reified R, reified TR> crossJoin(secondAlias: Alias<R>): CrossJoin<T, R, TR> =
-    //      CrossJoin(Alias(alias, secondAlias))
-    //
-    //    inline fun <reified R, reified TR> and(secondAlias: Alias<R>): Multiply<T, R, TR> =
-    //      Multiply(Alias(alias, secondAlias))
-    //
-    //    inline fun <reified R, reified TR, A> innerJoin(
-    //      secondAlias: Alias<R>,
-    //      onT: Path<T, A>,
-    //      onR: Path<R, A>
-    //    ): InnerJoin<T, R, TR, A> = InnerJoin(Alias(alias, secondAlias), onT, onR)
-    //
-    //    inline fun <reified R> with(path: Path<T, R>): WithRefs<T, R> =
-    //      WithRefs(
-    //        Alias<T, R, Any>(alias, Alias()) as Alias.Multiply<T, R, T>,
-    //        ClassRef(),
-    //        path
-    //      )
-    //
-    //    inline fun <reified R, reified TR> crossJoin(
-    //      secondAlias: String = R::class.simpleName!!.lowercase()
-    //    ): CrossJoin<T, R, TR> = crossJoin(Alias(secondAlias))
-    //
-    //    inline fun <reified R, reified TR> and(
-    //      secondAlias: String = R::class.simpleName!!.lowercase()
-    //    ): Multiply<T, R, TR> = and(Alias(secondAlias))
-    //
-    //    inline fun <reified R, reified TR, A> innerJoin(
-    //      secondAlias: String = R::class.simpleName!!.lowercase(),
-    //      onT: Path<T, A>,
-    //      onR: Path<R, A>
-    //    ): InnerJoin<T, R, TR, A> = innerJoin(Alias(secondAlias), onT, onR)
+    /**
+     * CrossJoin this source with [R]
+     *
+     * @param rightAlias alias for right side of the join
+     * @param R type of the right side
+     * @param TR type of the combined.
+     */
+    inline fun <reified R, reified TR> crossJoin(
+      rightAlias: String = R::class.simpleName!!.lowercase()
+    ): Mix.CrossJoin<T, R, TR> = Mix.CrossJoin(Alias(alias, Alias(rightAlias)))
+
+    /**
+     * Combine [T] with [R].
+     *
+     * @param rightAlias alias for right side of the join
+     * @param R type of the right side
+     * @param TR type of the combined.
+     */
+    inline fun <reified R, reified TR> and(
+      rightAlias: String = R::class.simpleName!!.lowercase()
+    ): Mix.Multiply<T, R, TR> = Mix.Multiply(Alias(alias, Alias(rightAlias)))
+
+    /**
+     * CrossJoin this source with [R] on [A]
+     *
+     * @param rightAlias alias for right side of the join
+     * @param leftSelector [Lens] to property of type [A] on [T]
+     * @param rightSelector [Lens] to property of type [A] on [R]
+     * @param R type of the right side
+     * @param TR type of the combined.
+     * @param A type of the property these specifications joined on that
+     */
+    inline fun <reified R, reified TR, A> innerJoin(
+      rightAlias: String = R::class.simpleName!!.lowercase(),
+      leftSelector: Lens<A, T>,
+      rightSelector: Lens<A, R>
+    ): Mix.InnerJoin<T, R, TR, A> =
+      Mix.InnerJoin(Alias(alias, Alias(rightAlias)), leftSelector, rightSelector)
   }
 
   /**
@@ -84,14 +90,14 @@ sealed class Source<T> private constructor(override val alias: Alias<T>) : Speci
      * Inner join of the [T] and [R] on a property with type [A].
      * Like <code>From table1 inner join table2 on table1.a = table2.a</code>
      *
-     * @property tSelector [Lens] to property of type [A] on [T]
-     * @property rSelector [Lens] to property of type [A] on [R]
+     * @property leftSelector [Lens] to property of type [A] on [T]
+     * @property rightSelector [Lens] to property of type [A] on [R]
      * @param A type of the property this [T] and [R] joined on that
      */
     class InnerJoin<T, R, TR, A>(
       alias: Alias.Multiply<T, R, TR>,
-      val tSelector: Lens<A, T>,
-      val rSelector: Lens<A, R>
+      val leftSelector: Lens<A, T>,
+      val rightSelector: Lens<A, R>
     ) : Mix<T, R, TR>(alias)
   }
 }

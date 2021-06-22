@@ -5,7 +5,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 
 internal class LensTest : FunSpec({
-  test("on() should return Focus") {
+  test("Lens.on() should return Focus") {
     val lens = Lens.on<String, Int>("name")
     lens.shouldBeInstanceOf<Lens.Focus<String, Int>>()
   }
@@ -15,10 +15,11 @@ internal class LensTest : FunSpec({
     lens.declaringClassRef shouldBe lens.propertyRef.declaringClassRef
   }
 
-  test("on() should return valid Lens") {
+  test("Lens.on() should return valid Lens") {
     val lens = Lens.on<String, Int>("name")
     lens.shouldBeInstanceOf<Lens.Focus<String, Int>>()
 
+    lens.propertyRef shouldBe PropertyRef.invoke<Int>("name", ClassRef<String>())
     lens.propertyRef.name shouldBe "name"
     lens.propertyRef.classRef shouldBe ClassRef<Int>()
     lens.declaringClassRef shouldBe ClassRef<String>()
@@ -32,7 +33,10 @@ internal class LensTest : FunSpec({
     (lens == lens) shouldBe true
     (lens.hashCode() == lens.hashCode()) shouldBe true
 
+    (lens == Lens.on<String, Int>("name")) shouldBe true
+
     (lens == ClassRef<String>()) shouldBe false
+    lens.equals("") shouldBe false
 
     (lens == Lens.on<String, Int>("family")) shouldBe false
     (lens == Lens.on<Int, Int>("name")) shouldBe false
@@ -60,8 +64,13 @@ internal class LensTest : FunSpec({
 
     val lens = lensName zoom lensSize
 
+    lens.propertyRef shouldBe lensSize.propertyRef
+
     (lens == lens) shouldBe true
     (lens.hashCode() == lens.hashCode()) shouldBe true
+
+    (lens == Lens.on<String, Int>("name").zoom(Lens.on<Int, Long>("Size"))) shouldBe true
+    (lens == Lens.on<Int, Long>("Size").zoom(Lens.on<Long, Int>("name"))) shouldBe false
 
     (lens == ClassRef<String>()) shouldBe false
     (lens.hashCode() == ClassRef<String>().hashCode()) shouldBe false
@@ -71,6 +80,7 @@ internal class LensTest : FunSpec({
     (lens.hashCode() == lensSize.hashCode()) shouldBe false
 
     (lens == Lens.on<String, Int>("family").zoom(Lens.on<Int, Long>("Size"))) shouldBe false
+    (lens == Lens.on<String, Int>("name").zoom(Lens.on<Int, Long>("family"))) shouldBe false
     (lens == Lens.on<Int, Int>("name").zoom(Lens.on<Int, Long>("family"))) shouldBe false
 
     (lens == Lens.on<Long, Int>("name").zoom(Lens.on<Int, Long>("Size"))) shouldBe false

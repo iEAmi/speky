@@ -6,7 +6,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 
 internal class AliasTest : FunSpec({
-  test("Single Alias") {
+  test("Alias.Invoke(String) should return Alias.Single") {
     val al = Alias.invoke<Int>("nam")
 
     al.shouldBeInstanceOf<Alias.Single<Int>>()
@@ -14,7 +14,7 @@ internal class AliasTest : FunSpec({
     (al.classRef == ClassRef<Int>()) shouldBe true
   }
 
-  test("Single Alias with default value") {
+  test("Alias.Invoke() with default value should return Alias.Single") {
     val al = Alias.invoke<Int>()
 
     al.shouldBeInstanceOf<Alias.Single<Int>>()
@@ -22,7 +22,7 @@ internal class AliasTest : FunSpec({
     (al.classRef == ClassRef<Int>()) shouldBe true
   }
 
-  test("Multiply") {
+  test("Alias.invoke(Alias, Alias) should return Alias.Multiply") {
     val alias1 = Alias.invoke<Int>("1")
     val alias2 = Alias.invoke<String>("2")
 
@@ -41,7 +41,7 @@ internal class AliasTest : FunSpec({
     (al.classRef == ClassRef<Long>()) shouldBe true
   }
 
-  test("show Single") {
+  test("Alias.show for Alias.Single") {
     val al = Alias.invoke<Int>("nam")
 
     with(Alias.show) {
@@ -49,7 +49,7 @@ internal class AliasTest : FunSpec({
     }
   }
 
-  test("show Multiply") {
+  test("Alias.show for Alias.Multiply") {
     val alias1 = Alias.invoke<Int>("1")
     val alias2 = Alias.invoke<String>("2")
 
@@ -76,6 +76,36 @@ internal class AliasTest : FunSpec({
 
     (al == Alias.invoke<Int>("nam")) shouldBe true
     (al.hashCode() == Alias.invoke<Int>("nam").hashCode()) shouldBe true
+
+    (al == Alias.invoke<Int>("name")) shouldBe false
+    (al.hashCode() == Alias.invoke<Int>("name").hashCode()) shouldBe false
+
+    (al == Alias.invoke<String>("nam")) shouldBe false
+    (al.hashCode() == Alias.invoke<String>("nam").hashCode()) shouldBe false
+  }
+
+  test("Alias.Multiply equals and hashCode") {
+    val alias1 = Alias.invoke<Int>("1")
+    val alias2 = Alias.invoke<String>("2")
+
+    val al = Alias.invoke<Int, String, Long>(alias1, alias2)
+
+    (al == al) shouldBe true
+    (al.hashCode() == al.hashCode()) shouldBe true
+
+    (al == Alias.invoke<Int, String, Long>(Alias.invoke("1"), Alias.invoke("2"))) shouldBe true
+
+    (al == ClassRef<Int>()) shouldBe false
+
+    (al == alias1) shouldBe false
+    (al == alias2) shouldBe false
+
+    (al == Alias.invoke<Int, Int, String>(Alias.invoke("1"), Alias.invoke("1"))) shouldBe false
+    (al == Alias.invoke<Long, String, Long>(Alias.invoke("2"), Alias.invoke("1"))) shouldBe false
+    (al == Alias.invoke<Int, String, Long>(Alias.invoke("2"), Alias.invoke("3"))) shouldBe false
+
+    (al == Alias.invoke<Int, String, Long>(Alias.invoke("1"), Alias.invoke("22"))) shouldBe false
+    (al == Alias.invoke<Int, String, Long>(Alias.invoke("11"), Alias.invoke("22"))) shouldBe false
 
     (al == Alias.invoke<Int>("name")) shouldBe false
     (al.hashCode() == Alias.invoke<Int>("name").hashCode()) shouldBe false
