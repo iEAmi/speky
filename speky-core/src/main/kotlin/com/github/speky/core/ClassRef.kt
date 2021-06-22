@@ -13,7 +13,6 @@ data class ClassRef<T> @PublishedApi internal constructor(
   val qualifiedName: String
 ) {
   companion object {
-
     /**
      * [Show] instance for [ClassRef].
      */

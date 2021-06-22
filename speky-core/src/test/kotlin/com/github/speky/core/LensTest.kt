@@ -26,12 +26,14 @@ internal class LensTest : FunSpec({
     lens shouldBe Lens.Focus(PropertyRef.invoke<Int>("name", ClassRef<String>()))
   }
 
-  test("equals") {
+  test("Lens.Focus equals and hashCode") {
     val lens = Lens.on<String, Int>("name")
 
     (lens == lens) shouldBe true
+    (lens.hashCode() == lens.hashCode()) shouldBe true
 
     (lens == ClassRef<String>()) shouldBe false
+
     (lens == Lens.on<String, Int>("family")) shouldBe false
     (lens == Lens.on<Int, Int>("name")) shouldBe false
     (lens == Lens.on<String, Long>("name")) shouldBe false
@@ -41,6 +43,38 @@ internal class LensTest : FunSpec({
       .hashCode()) shouldBe true
 
     (lens.hashCode() == PropertyRef<Int>("name", ClassRef<String>()).hashCode()) shouldBe true
+
+    run {
+      val lensName = Lens.on<String, Int>("name")
+      val lensSize = Lens.on<Int, Long>("Size")
+
+      val zoomed = lensName zoom lensSize
+
+      (lens == zoomed) shouldBe false
+    }
+  }
+
+  test("Lens.Zoom equals and hashCode") {
+    val lensName = Lens.on<String, Int>("name")
+    val lensSize = Lens.on<Int, Long>("Size")
+
+    val lens = lensName zoom lensSize
+
+    (lens == lens) shouldBe true
+    (lens.hashCode() == lens.hashCode()) shouldBe true
+
+    (lens == ClassRef<String>()) shouldBe false
+    (lens.hashCode() == ClassRef<String>().hashCode()) shouldBe false
+    (lens == lensName) shouldBe false
+    (lens.hashCode() == lensName.hashCode()) shouldBe false
+    (lens == lensSize) shouldBe false
+    (lens.hashCode() == lensSize.hashCode()) shouldBe false
+
+    (lens == Lens.on<String, Int>("family").zoom(Lens.on<Int, Long>("Size"))) shouldBe false
+    (lens == Lens.on<Int, Int>("name").zoom(Lens.on<Int, Long>("family"))) shouldBe false
+
+    (lens == Lens.on<Long, Int>("name").zoom(Lens.on<Int, Long>("Size"))) shouldBe false
+    (lens == Lens.on<Long, Int>("name").zoom(Lens.on<Int, Int>("Size"))) shouldBe false
   }
 
   test("zoom") {

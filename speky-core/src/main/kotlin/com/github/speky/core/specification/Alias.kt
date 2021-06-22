@@ -9,10 +9,9 @@ import com.github.speky.core.Show
  * @property classRef [ClassRef] of the class
  * @param T type of the class which [Alias] has been created for that
  */
-sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
+sealed class Alias<T> private constructor(open val classRef: ClassRef<T>) {
 
   companion object {
-
     /**
      * [Show] instance for [Alias].
      */
@@ -34,9 +33,9 @@ sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
      * Invoke operator for creating [Multiply] instance.
      */
     inline operator fun <T, R, reified TR> invoke(
-      first: Alias<T>,
-      second: Alias<R>
-    ): Multiply<T, R, TR> = Multiply(ClassRef(), first, second)
+      left: Alias<T>,
+      right: Alias<R>
+    ): Multiply<T, R, TR> = Multiply(ClassRef(), left, right)
   }
 
   /**
@@ -44,14 +43,48 @@ sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
    *
    * @property value alias value
    */
-  class Single<T>(clsRef: ClassRef<T>, val value: String) : Alias<T>(clsRef)
+  class Single<T>(override val classRef: ClassRef<T>, val value: String) : Alias<T>(classRef) {
+    override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (other !is Single<*>) return false
+
+      if (classRef != other.classRef) return false
+      if (value != other.value) return false
+
+      return true
+    }
+
+    override fun hashCode(): Int {
+      var result = classRef.hashCode()
+      result = 31 * result + value.hashCode()
+      return result
+    }
+  }
 
   /**
    * Combined [Alias] for [left] and [right].
    */
   class Multiply<T, R, TR>(
-    classRef: ClassRef<TR>,
+    override val classRef: ClassRef<TR>,
     val left: Alias<T>,
     val right: Alias<R>
-  ) : Alias<TR>(classRef)
+  ) : Alias<TR>(classRef) {
+    override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (other !is Multiply<*, *, *>) return false
+
+      if (classRef != other.classRef) return false
+      if (left != other.left) return false
+      if (right != other.right) return false
+
+      return true
+    }
+
+    override fun hashCode(): Int {
+      var result = classRef.hashCode()
+      result = 31 * result + left.hashCode()
+      result = 31 * result + right.hashCode()
+      return result
+    }
+  }
 }

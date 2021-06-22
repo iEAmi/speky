@@ -1,6 +1,7 @@
 package com.github.speky.core.specification
 
 import com.github.speky.core.ClassRef
+import com.github.speky.core.specification.Source.Single
 
 /**
  * Definition of the specification. each specification is wrote for specific [ClassRef].
@@ -16,16 +17,18 @@ sealed class Specification<T> internal constructor(open val alias: Alias<T>) {
    */
   val classRef: ClassRef<T> get() = alias.classRef
 
-//  internal companion object {
-//
-//    /**
-//     * Invoke operator to create new [Specification] instance.
-//     *
-//     * @param alias specification alias
-//     */
-    //    internal operator fun <T> invoke(alias: Alias<T>): Alias.Single<T> = Alias.Single(alias)
-    //
-    //    internal inline operator fun <reified T> invoke(alias: String): Single<T> =
-//            invoke(Alias(alias))
-//  }
+  companion object {
+
+    /**
+     * Invoke operator to create new [Specification] instance.
+     *
+     * @param alias specification alias
+     */
+    operator fun <T> invoke(alias: Alias<T>): Single<T> = Single(alias)
+
+    /**
+     * @see [invoke].
+     */
+    inline operator fun <reified T> invoke(alias: String): Single<T> = invoke(Alias(alias))
+  }
 }

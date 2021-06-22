@@ -15,7 +15,6 @@ data class PropertyRef<T> @PublishedApi internal constructor(
   val declaringClassRef: ClassRef<*>,
 ) {
   companion object {
-
     /**
      * [Show] instance for [PropertyRef].
      */

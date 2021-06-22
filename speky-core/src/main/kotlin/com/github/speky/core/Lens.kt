@@ -11,7 +11,7 @@ package com.github.speky.core
  * @param R type of property [Lens] points to
  * @param T type of class which contains property
  */
-sealed class Lens<R, T> private constructor(val propertyRef: PropertyRef<R>) {
+sealed class Lens<R, T> private constructor(open val propertyRef: PropertyRef<R>) {
 
   /**
    * Delegate property to [PropertyRef.declaringClassRef].
@@ -27,17 +27,6 @@ sealed class Lens<R, T> private constructor(val propertyRef: PropertyRef<R>) {
    */
   infix fun <V> zoom(other: Lens<V, R>): Lens<V, Lens<R, T>> =
     Zoom(this, other, other.propertyRef)
-
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (other !is Lens<*, *>) return false
-
-    if (propertyRef != other.propertyRef) return false
-
-    return true
-  }
-
-  override fun hashCode(): Int = propertyRef.hashCode()
 
   companion object {
 
@@ -66,8 +55,21 @@ sealed class Lens<R, T> private constructor(val propertyRef: PropertyRef<R>) {
    * Starting point of the Lens. [Focus] is 1X a [Lens] with 1x zoom.
    */
   class Focus<R, T> @PublishedApi internal constructor(
-    propertyRef: PropertyRef<R>
-  ) : Lens<R, T>(propertyRef)
+    override val propertyRef: PropertyRef<R>
+  ) : Lens<R, T>(propertyRef) {
+    override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (javaClass != other?.javaClass) return false
+
+      other as Focus<*, *>
+
+      if (propertyRef != other.propertyRef) return false
+
+      return true
+    }
+
+    override fun hashCode(): Int = propertyRef.hashCode()
+  }
 
   /**
    * A [Lens] that has more than 1x zoom level and combined two lens together.
@@ -78,6 +80,26 @@ sealed class Lens<R, T> private constructor(val propertyRef: PropertyRef<R>) {
   class Zoom<V, R, T> internal constructor(
     val left: Lens<R, T>,
     val right: Lens<V, R>,
-    propertyRef: PropertyRef<V>
-  ) : Lens<V, Lens<R, T>>(propertyRef)
+    override val propertyRef: PropertyRef<V>
+  ) : Lens<V, Lens<R, T>>(propertyRef) {
+    override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (javaClass != other?.javaClass) return false
+
+      other as Zoom<*, *, *>
+
+      if (left != other.left) return false
+      if (right != other.right) return false
+      if (propertyRef != other.propertyRef) return false
+
+      return true
+    }
+
+    override fun hashCode(): Int {
+      var result = left.hashCode()
+      result = 31 * result + right.hashCode()
+      result = 31 * result + propertyRef.hashCode()
+      return result
+    }
+  }
 }
