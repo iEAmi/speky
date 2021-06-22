@@ -18,17 +18,9 @@ sealed class Specification<T> internal constructor(open val alias: Alias<T>) {
   val classRef: ClassRef<T> get() = alias.classRef
 
   companion object {
-
     /**
-     * Invoke operator to create new [Specification] instance.
-     *
-     * @param alias specification alias
+     * Factory-method to create [Specification] instance.
      */
-    operator fun <T> invoke(alias: Alias<T>): Single<T> = Single(alias)
-
-    /**
-     * @see [invoke].
-     */
-    inline operator fun <reified T> invoke(alias: String): Single<T> = invoke(Alias(alias))
+    inline fun <reified T> from(alias: String): Single<T> = Single(Alias.of(alias))
   }
 }

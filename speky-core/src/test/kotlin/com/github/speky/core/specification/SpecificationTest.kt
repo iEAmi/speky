@@ -8,20 +8,20 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 internal class SpecificationTest : FunSpec({
 
   test("invoke(Alias) should return Source.Single") {
-    val spec = Specification.invoke(Alias<Int>("alias"))
+    val spec = Specification.from<Int>("alias")
 
     spec.shouldBeInstanceOf<Source.Single<Int>>()
-    spec.alias shouldBe Alias("alias")
-    spec.alias.classRef shouldBe ClassRef()
+    spec.alias shouldBe Alias.of("alias")
+    spec.alias.classRef shouldBe ClassRef.of()
     spec.classRef shouldBe spec.classRef
   }
 
   test("invoke(String) should return Source.Single") {
-    val spec = Specification.invoke<Int>("alias")
+    val spec = Specification.from<Int>("alias")
 
     spec.shouldBeInstanceOf<Source.Single<Int>>()
-    spec.alias shouldBe Alias("alias")
-    spec.alias.classRef shouldBe ClassRef()
+    spec.alias shouldBe Alias.of("alias")
+    spec.alias.classRef shouldBe ClassRef.of()
     spec.classRef shouldBe spec.classRef
   }
 })

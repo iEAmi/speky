@@ -32,9 +32,8 @@ sealed class Source<T> private constructor(override val alias: Alias<T>) : Speci
      * @param R type of the right side
      * @param TR type of the combined.
      */
-    inline fun <reified R, reified TR> crossJoin(
-      rightAlias: String = R::class.simpleName!!.lowercase()
-    ): Mix.CrossJoin<T, R, TR> = Mix.CrossJoin(Alias(alias, Alias(rightAlias)))
+    inline fun <reified R, reified TR> crossJoin(rightAlias: String): Mix.CrossJoin<T, R, TR> =
+      Mix.CrossJoin(Alias.of(alias, Alias.of(rightAlias)))
 
     /**
      * Combine [T] with [R].
@@ -43,9 +42,8 @@ sealed class Source<T> private constructor(override val alias: Alias<T>) : Speci
      * @param R type of the right side
      * @param TR type of the combined.
      */
-    inline fun <reified R, reified TR> and(
-      rightAlias: String = R::class.simpleName!!.lowercase()
-    ): Mix.Multiply<T, R, TR> = Mix.Multiply(Alias(alias, Alias(rightAlias)))
+    inline fun <reified R, reified TR> and(rightAlias: String): Mix.Multiply<T, R, TR> =
+      Mix.Multiply(Alias.of(alias, Alias.of(rightAlias)))
 
     /**
      * CrossJoin this source with [R] on [A]
@@ -58,11 +56,11 @@ sealed class Source<T> private constructor(override val alias: Alias<T>) : Speci
      * @param A type of the property these specifications joined on that
      */
     inline fun <reified R, reified TR, A> innerJoin(
-      rightAlias: String = R::class.simpleName!!.lowercase(),
+      rightAlias: String,
       leftSelector: Lens<A, T>,
       rightSelector: Lens<A, R>
     ): Mix.InnerJoin<T, R, TR, A> =
-      Mix.InnerJoin(Alias(alias, Alias(rightAlias)), leftSelector, rightSelector)
+      Mix.InnerJoin(Alias.of(alias, Alias.of(rightAlias)), leftSelector, rightSelector)
   }
 
   /**

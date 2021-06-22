@@ -9,7 +9,7 @@ import com.github.speky.core.Show
  * @property classRef [ClassRef] of the class
  * @param T type of the class which [Alias] has been created for that
  */
-sealed class Alias<T> private constructor(open val classRef: ClassRef<T>) {
+sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
 
   companion object {
     /**
@@ -23,19 +23,17 @@ sealed class Alias<T> private constructor(open val classRef: ClassRef<T>) {
     }
 
     /**
-     * Invoke operator to create new [Single] instance.
+     * Factory-method to create new [Single] instance.
      */
-    inline operator fun <reified T> invoke(
-      value: String = T::class.simpleName!!.lowercase()
-    ): Single<T> = Single(ClassRef(), value)
+    inline fun <reified T> of(value: String): Single<T> = Single(ClassRef.of(), value)
 
     /**
-     * Invoke operator for creating [Multiply] instance.
+     * Factory-method for creating [Multiply] instance.
      */
-    inline operator fun <T, R, reified TR> invoke(
+    inline fun <T, R, reified TR> of(
       left: Alias<T>,
       right: Alias<R>
-    ): Multiply<T, R, TR> = Multiply(ClassRef(), left, right)
+    ): Multiply<T, R, TR> = Multiply(ClassRef.of(), left, right)
   }
 
   /**
@@ -43,7 +41,7 @@ sealed class Alias<T> private constructor(open val classRef: ClassRef<T>) {
    *
    * @property value alias value
    */
-  class Single<T>(override val classRef: ClassRef<T>, val value: String) : Alias<T>(classRef) {
+  class Single<T>(clsRef: ClassRef<T>, val value: String) : Alias<T>(clsRef) {
     override fun equals(other: Any?): Boolean {
       if (this === other) return true
       if (other !is Single<*>) return false
@@ -65,10 +63,10 @@ sealed class Alias<T> private constructor(open val classRef: ClassRef<T>) {
    * Combined [Alias] for [left] and [right].
    */
   class Multiply<T, R, TR>(
-    override val classRef: ClassRef<TR>,
+    clsRef: ClassRef<TR>,
     val left: Alias<T>,
     val right: Alias<R>
-  ) : Alias<TR>(classRef) {
+  ) : Alias<TR>(clsRef) {
     override fun equals(other: Any?): Boolean {
       if (this === other) return true
       if (other !is Multiply<*, *, *>) return false

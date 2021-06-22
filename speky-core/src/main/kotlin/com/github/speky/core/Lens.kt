@@ -11,7 +11,7 @@ package com.github.speky.core
  * @param R type of property [Lens] points to
  * @param T type of class which contains property
  */
-sealed class Lens<R, T> private constructor(open val propertyRef: PropertyRef<R>) {
+sealed class Lens<R, T> private constructor(val propertyRef: PropertyRef<R>) {
 
   /**
    * Delegate property to [PropertyRef.declaringClassRef].
@@ -48,20 +48,18 @@ sealed class Lens<R, T> private constructor(open val propertyRef: PropertyRef<R>
      * @param R type of the property
      */
     inline fun <reified T, reified R> on(name: String): Lens<R, T> =
-      Focus(PropertyRef(name, ClassRef<T>()))
+      Focus(PropertyRef.of(name, ClassRef.of<T>()))
   }
 
   /**
    * Starting point of the Lens. [Focus] is 1X a [Lens] with 1x zoom.
    */
-  class Focus<R, T> @PublishedApi internal constructor(
-    override val propertyRef: PropertyRef<R>
-  ) : Lens<R, T>(propertyRef) {
+  class Focus<R, T>(
+    propRef: PropertyRef<R>
+  ) : Lens<R, T>(propRef) {
     override fun equals(other: Any?): Boolean {
       if (this === other) return true
-      if (javaClass != other?.javaClass) return false
-
-      other as Focus<*, *>
+      if (other !is Focus<*, *>) return false
 
       if (propertyRef != other.propertyRef) return false
 
@@ -77,16 +75,14 @@ sealed class Lens<R, T> private constructor(open val propertyRef: PropertyRef<R>
    * @property left left [Lens]
    * @property right right [Lens] that was combined to [left]
    */
-  class Zoom<V, R, T> internal constructor(
+  class Zoom<V, R, T>(
     val left: Lens<R, T>,
     val right: Lens<V, R>,
-    override val propertyRef: PropertyRef<V>
-  ) : Lens<V, Lens<R, T>>(propertyRef) {
+    propRef: PropertyRef<V>
+  ) : Lens<V, Lens<R, T>>(propRef) {
     override fun equals(other: Any?): Boolean {
       if (this === other) return true
-      if (javaClass != other?.javaClass) return false
-
-      other as Zoom<*, *, *>
+      if (other !is Zoom<*, *, *>) return false
 
       if (left != other.left) return false
       if (right != other.right) return false

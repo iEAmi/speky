@@ -8,7 +8,7 @@ package com.github.speky.core
  *
  * @param T type of the class
  */
-data class ClassRef<T> @PublishedApi internal constructor(
+data class ClassRef<T>(
   val name: String,
   val qualifiedName: String
 ) {
@@ -23,7 +23,7 @@ data class ClassRef<T> @PublishedApi internal constructor(
      *
      * @param T type of the class to create [ClassRef] for it
      */
-    inline operator fun <reified T> invoke(): ClassRef<T> =
+    inline fun <reified T> of(): ClassRef<T> =
       T::class.let { ClassRef(it.simpleName!!, it.qualifiedName!!) }
   }
 }
