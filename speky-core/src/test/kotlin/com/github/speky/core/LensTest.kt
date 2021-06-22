@@ -38,7 +38,6 @@ internal class LensTest : FunSpec({
 
     (lens == ClassRef.of<String>()) shouldBe false
     lens.equals("") shouldBe false
-    lens.equals(null) shouldBe false
 
     (lens == Lens.on<String, Int>("family")) shouldBe false
     (lens == Lens.on<Int, Int>("name")) shouldBe false
