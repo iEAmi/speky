@@ -9,17 +9,17 @@ package com.github.speky.core
  *
  * @param T type of the property
  */
-data class PropertyRef<T> internal constructor(
+data class PropertyRef<T> @PublishedApi internal constructor(
   val name: String,
   val classRef: ClassRef<T>,
   val declaringClassRef: ClassRef<*>,
 ) {
-  internal companion object {
+  companion object {
 
     /**
      * [Show] instance for [PropertyRef].
      */
-    internal val show: Show<PropertyRef<*>> = Show { "${declaringClassRef.name}.$name" }
+    val show: Show<PropertyRef<*>> = Show { "${declaringClassRef.name}.$name" }
 
     /**
      * Invoke operator to create new Instance of the [PropertyRef].
@@ -28,7 +28,7 @@ data class PropertyRef<T> internal constructor(
      * @param declaringClass [ClassRef] of the class that property belongs to that
      * @param T type of the property to create [PropertyRef] for it
      */
-    internal inline operator fun <reified T> invoke(
+    inline operator fun <reified T> invoke(
       name: String,
       declaringClass: ClassRef<*>
     ): PropertyRef<T> {

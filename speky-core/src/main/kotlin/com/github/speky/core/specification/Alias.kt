@@ -11,12 +11,12 @@ import com.github.speky.core.Show
  */
 sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
 
-  internal companion object {
+  companion object {
 
     /**
      * [Show] instance for [Alias].
      */
-    internal val show: Show<Alias<*>> = object : Show<Alias<*>> {
+    val show: Show<Alias<*>> = object : Show<Alias<*>> {
       override fun Alias<*>.show(): String = when (this) {
         is Single            -> "${classRef.name} as $value"
         is Multiply<*, *, *> -> "${left.show()} & ${right.show()}"
@@ -24,16 +24,16 @@ sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
     }
 
     /**
-     * Invoke() operator to create new [Single] instance.
+     * Invoke operator to create new [Single] instance.
      */
-    internal inline operator fun <reified T> invoke(
+    inline operator fun <reified T> invoke(
       value: String = T::class.simpleName!!.lowercase()
     ): Single<T> = Single(ClassRef(), value)
 
     /**
      * Invoke operator for creating [Multiply] instance.
      */
-    internal inline operator fun <T, R, reified TR> invoke(
+    inline operator fun <T, R, reified TR> invoke(
       first: Alias<T>,
       second: Alias<R>
     ): Multiply<T, R, TR> = Multiply(ClassRef(), first, second)
@@ -44,12 +44,12 @@ sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
    *
    * @property value alias value
    */
-  class Single<T> internal constructor(clsRef: ClassRef<T>, val value: String) : Alias<T>(clsRef)
+  class Single<T>(clsRef: ClassRef<T>, val value: String) : Alias<T>(clsRef)
 
   /**
    * Combined [Alias] for [left] and [right].
    */
-  class Multiply<T, R, TR> internal constructor(
+  class Multiply<T, R, TR>(
     classRef: ClassRef<TR>,
     val left: Alias<T>,
     val right: Alias<R>

@@ -39,12 +39,12 @@ sealed class Lens<R, T> private constructor(val propertyRef: PropertyRef<R>) {
 
   override fun hashCode(): Int = propertyRef.hashCode()
 
-  internal companion object {
+  companion object {
 
     /**
      * [Show] instance for [Lens].
      */
-    internal val show: Show<Lens<*, *>> = object : Show<Lens<*, *>> {
+    val show: Show<Lens<*, *>> = object : Show<Lens<*, *>> {
       override fun Lens<*, *>.show(): String = when (this) {
         is Focus         -> with(PropertyRef.show) { propertyRef.show() }
         is Zoom<*, *, *> -> left.show() + "." + right.propertyRef.name
@@ -58,14 +58,16 @@ sealed class Lens<R, T> private constructor(val propertyRef: PropertyRef<R>) {
      * @param T type of the class that owns property
      * @param R type of the property
      */
-    internal inline fun <reified T, reified R> on(name: String): Lens<R, T> =
+    inline fun <reified T, reified R> on(name: String): Lens<R, T> =
       Focus(PropertyRef(name, ClassRef<T>()))
   }
 
   /**
    * Starting point of the Lens. [Focus] is 1X a [Lens] with 1x zoom.
    */
-  class Focus<R, T> internal constructor(propertyRef: PropertyRef<R>) : Lens<R, T>(propertyRef)
+  class Focus<R, T> @PublishedApi internal constructor(
+    propertyRef: PropertyRef<R>
+  ) : Lens<R, T>(propertyRef)
 
   /**
    * A [Lens] that has more than 1x zoom level and combined two lens together.
