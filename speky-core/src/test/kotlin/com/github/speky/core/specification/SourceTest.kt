@@ -95,4 +95,15 @@ internal class SourceTest : FunSpec({
 
     and.select().shouldBeInstanceOf<Selected.All<String>>()
   }
+
+  test("Source.Single.order() should return Ordered") {
+    val spec = Specification.from<Int>("0").select()
+    val ordered = spec.order(Order.asc(Lens.on<Int, String>("name")))
+
+    ordered.shouldBeInstanceOf<Ordered<Int, String>>()
+    ordered.order.lens shouldBe Order.asc(Lens.on<Int, String>("name")).lens
+    ordered.classRef shouldBe spec.classRef
+    ordered.delegate shouldBe spec
+    ordered.alias shouldBe spec.alias
+  }
 })

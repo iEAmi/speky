@@ -4,10 +4,11 @@ import com.github.speky.core.Lens
 
 /**
  * A [Decorator] that decorate [source] and add Select expression to that.
+ *
  * @property source [Source] specification to decorate
  */
 sealed class Selected<T> private constructor(val source: Source<T>) :
-  Decorator<T>(source) /*, Orderable<T, Selected<T>>, Filterable<T, Selected<T>>*/ {
+  Decorator<T>(source), Orderable<T, Selected<T>>/*, Filterable<T, Selected<T>>*/ {
 
   /**
    * Like <code>Select * from table as alias</code>.
