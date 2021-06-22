@@ -11,12 +11,11 @@ import com.github.speky.core.Show
  */
 sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
 
-  internal companion object {
-
+  companion object {
     /**
      * [Show] instance for [Alias].
      */
-    internal val show: Show<Alias<*>> = object : Show<Alias<*>> {
+    val show: Show<Alias<*>> = object : Show<Alias<*>> {
       override fun Alias<*>.show(): String = when (this) {
         is Single            -> "${classRef.name} as $value"
         is Multiply<*, *, *> -> "${left.show()} & ${right.show()}"
@@ -24,19 +23,17 @@ sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
     }
 
     /**
-     * Invoke() operator to create new [Single] instance.
+     * Factory-method to create new [Single] instance.
      */
-    internal inline operator fun <reified T> invoke(
-      value: String = T::class.simpleName!!.lowercase()
-    ): Single<T> = Single(ClassRef(), value)
+    inline fun <reified T> of(value: String): Single<T> = Single(ClassRef.of(), value)
 
     /**
-     * Invoke operator for creating [Multiply] instance.
+     * Factory-method for creating [Multiply] instance.
      */
-    internal inline operator fun <T, R, reified TR> invoke(
-      first: Alias<T>,
-      second: Alias<R>
-    ): Multiply<T, R, TR> = Multiply(ClassRef(), first, second)
+    inline fun <T, R, reified TR> of(
+      left: Alias<T>,
+      right: Alias<R>
+    ): Multiply<T, R, TR> = Multiply(ClassRef.of(), left, right)
   }
 
   /**
@@ -44,14 +41,48 @@ sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
    *
    * @property value alias value
    */
-  class Single<T> internal constructor(clsRef: ClassRef<T>, val value: String) : Alias<T>(clsRef)
+  class Single<T>(clsRef: ClassRef<T>, val value: String) : Alias<T>(clsRef) {
+    override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (other !is Single<*>) return false
+
+      if (classRef != other.classRef) return false
+      if (value != other.value) return false
+
+      return true
+    }
+
+    override fun hashCode(): Int {
+      var result = classRef.hashCode()
+      result = 31 * result + value.hashCode()
+      return result
+    }
+  }
 
   /**
    * Combined [Alias] for [left] and [right].
    */
-  class Multiply<T, R, TR> internal constructor(
-    classRef: ClassRef<TR>,
+  class Multiply<T, R, TR>(
+    clsRef: ClassRef<TR>,
     val left: Alias<T>,
     val right: Alias<R>
-  ) : Alias<TR>(classRef)
+  ) : Alias<TR>(clsRef) {
+    override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (other !is Multiply<*, *, *>) return false
+
+      if (classRef != other.classRef) return false
+      if (left != other.left) return false
+      if (right != other.right) return false
+
+      return true
+    }
+
+    override fun hashCode(): Int {
+      var result = classRef.hashCode()
+      result = 31 * result + left.hashCode()
+      result = 31 * result + right.hashCode()
+      return result
+    }
+  }
 }

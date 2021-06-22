@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.github.speky"
-version = "0.1.0"
+version = "0.3.0"
 
 repositories {
   mavenLocal()

@@ -8,23 +8,22 @@ package com.github.speky.core
  *
  * @param T type of the class
  */
-data class ClassRef<T> internal constructor(
+data class ClassRef<T>(
   val name: String,
   val qualifiedName: String
 ) {
-  internal companion object {
-
+  companion object {
     /**
      * [Show] instance for [ClassRef].
      */
-    internal val show: Show<ClassRef<*>> = Show { "$name @ $qualifiedName" }
+    val show: Show<ClassRef<*>> = Show { "$name @ $qualifiedName" }
 
     /**
      * Invoke operator to create new instance of [ClassRef].
      *
      * @param T type of the class to create [ClassRef] for it
      */
-    internal inline operator fun <reified T> invoke(): ClassRef<T> =
+    inline fun <reified T> of(): ClassRef<T> =
       T::class.let { ClassRef(it.simpleName!!, it.qualifiedName!!) }
   }
 }
