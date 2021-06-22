@@ -39,4 +39,16 @@ internal class OrderTest : FunSpec({
 
     with(Order.show) { order.show() shouldBe "order by String.a desc" }
   }
+
+  test("Order.descWithLens2 test") {
+    val order = Order.desc(Lens.on<String, Int>("person").zoom(Lens.on<Int, Long>("age")))
+
+    with(Order.show) { order.show() shouldBe "order by String.person.age desc" }
+  }
+
+  test("Order.aseWithLens2 test") {
+    val order = Order.asc(Lens.on<String, Int>("person").zoom(Lens.on<Int, Long>("age")))
+
+    with(Order.show) { order.show() shouldBe "order by String.person.age asc" }
+  }
 })

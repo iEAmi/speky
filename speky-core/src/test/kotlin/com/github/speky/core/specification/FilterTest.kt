@@ -185,4 +185,13 @@ internal class FilterTest : FunSpec({
 
     with(Filter.show) { filter.show() shouldBe "String.length like '%fii'" }
   }
+
+  test("Filter.likeWithLens2() test") {
+    val lens = Lens.on<String, Int>("length").zoom(Lens.on<Int, String>("name"))
+    val filter = Filter.like(lens, "d")
+
+    with(Filter.show) {
+      filter.show() shouldBe "String.length.name like '%d%'"
+    }
+  }
 })
