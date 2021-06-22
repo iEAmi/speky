@@ -8,7 +8,7 @@ import com.github.speky.core.Show
  *
  * @property lens [Lens] to property in [T] with type [F]
  * @param T type that filter applied to that
- * @param F type of the filter
+ * @param F type of the property that [lens] points to that
  */
 sealed class Filter<T, F> private constructor(
   val lens: Lens<F, T>
