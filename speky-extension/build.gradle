@@ -1,3 +1,4 @@
 dependencies {
-    compileOnly(project(":speky-core"))
+  compileOnly(project(":speky-core"))
+  testImplementation(project(":speky-core"))
 }
