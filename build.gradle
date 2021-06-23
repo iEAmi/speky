@@ -1,0 +1,96 @@
+buildscript {
+  ext {
+    kotlinVersion = "1.5.10"
+    detektVersion = "1.17.1"
+    kotestVersion = "4.6.0"
+    jacocoVersion = "0.8.7"
+  }
+  repositories {
+    mavenCentral()
+    gradlePluginPortal()
+  }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+    classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${detektVersion}"
+  }
+}
+
+allprojects {
+  group = "com.github.speky"
+  version = "0.3.0"
+}
+
+subprojects { project ->
+  apply plugin: "kotlin"
+  apply plugin: "java-library"
+  apply plugin: "jacoco"
+  apply plugin: "io.gitlab.arturbosch.detekt"
+
+  repositories {
+    mavenLocal()
+    mavenCentral()
+  }
+
+  dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:${detektVersion}"
+
+    testImplementation "io.kotest:kotest-runner-junit5:${kotestVersion}"
+    testImplementation "io.kotest:kotest-assertions-core:${kotestVersion}"
+    testImplementation "io.kotest:kotest-property:${kotestVersion}"
+  }
+
+  test {
+    useJUnitPlatform()
+  }
+
+  compileKotlin {
+    kotlinOptions.languageVersion = "1.5"
+    kotlinOptions.apiVersion = "1.5"
+    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.allWarningsAsErrors = true
+  }
+
+  compileTestKotlin {
+    kotlinOptions.languageVersion = "1.5"
+    kotlinOptions.apiVersion = "1.5"
+    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.allWarningsAsErrors = true
+  }
+
+  jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+      csv.required = false
+    }
+  }
+
+  jacocoTestCoverageVerification {
+    violationRules {
+      rule {
+        limit {
+          minimum = 0.9
+        }
+      }
+    }
+  }
+
+  task generateSources(type: Jar) {
+    archiveClassifier = "sources"
+    from sourceSets.main.allSource
+  }
+
+  task generateJavadoc(type: Jar) {
+    archiveClassifier = "javadoc"
+  }
+
+  jacoco {
+    toolVersion = jacocoVersion
+  }
+
+  detekt {
+    toolVersion = detektVersion
+    input = files("src/main/kotlin")
+    config = files("${project.rootDir}/detekt.yml")
+  }
+}
