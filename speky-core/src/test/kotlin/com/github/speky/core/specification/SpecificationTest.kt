@@ -7,6 +7,7 @@ import com.github.speky.core.specification.Filter.Companion.like
 import com.github.speky.core.specification.Order.Companion.desc
 import com.github.speky.core.specification.Specification.Companion.from
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 
@@ -162,5 +163,39 @@ internal class SpecificationTest : FunSpec({
 
     (((spec.delegate as Ordered<*, *>).delegate as Filtered<*, *>).delegate as Selected.All<*>)
       .source.shouldBeInstanceOf<Source.Mix.CrossJoin<Person, Product, PersonProduct>>()
+  }
+
+  test("insertOn table") {
+    val spec = Specification.insertOn<Person>(
+      Value.of("name", "Ahmad"),
+      Value.of("age", 10L)
+    )
+
+    val insert = Sink.insert<Person>(
+      listOf(
+        Value.of("name", "Ahmad"),
+        Value.of("age", 10L)
+      )
+    )
+
+    spec.alias shouldBe insert.alias
+    spec.values shouldContainAll insert.values
+  }
+
+  test("updateOn table update all") {
+    val spec = Specification.updateOn<Person>(
+      Value.of("name", "Ahmad"),
+      Value.of("age", 10L)
+    )
+
+    val update = Sink.update<Person>(
+      setOf(
+        Value.of("name", "Ahmad"),
+        Value.of("age", 10L)
+      )
+    )
+
+    spec.alias shouldBe update.alias
+    spec.values shouldContainAll update.values
   }
 })

@@ -43,6 +43,13 @@ internal class AliasTest : FunSpec({
     (al.classRef == ClassRef.of<Long>()) shouldBe true
   }
 
+  test("Alias.justClass() should return Alias.JustClassRef") {
+    val al = Alias.justClass<Int>()
+
+    al.shouldBeInstanceOf<Alias.JustClassRef<Int>>()
+    (al.classRef == ClassRef.of<Int>()) shouldBe true
+  }
+
   test("Alias.show for Alias.Single") {
     val al = Alias.of<Int>("nam")
 
@@ -65,6 +72,14 @@ internal class AliasTest : FunSpec({
 
     with(Alias.show) {
       al.show() shouldBe "Int as 1 & String as 2 & Short as 3"
+    }
+  }
+
+  test("Alias.show for Alias.JustClassRef") {
+    val al = Alias.justClass<Int>()
+
+    with(Alias.show) {
+      al.show() shouldBe al.classRef.name.lowercase()
     }
   }
 
@@ -114,5 +129,21 @@ internal class AliasTest : FunSpec({
 
     (al == Alias.of<String>("nam")) shouldBe false
     (al.hashCode() == Alias.of<String>("nam").hashCode()) shouldBe false
+  }
+
+  test("Alias.JustClassRef equals and hashCode") {
+    val al = Alias.justClass<Int>()
+
+    al.shouldBeInstanceOf<Alias.JustClassRef<Int>>()
+    (al == al) shouldBe true
+    (al.hashCode() == al.hashCode()) shouldBe true
+
+    (al == ClassRef.of<Int>()) shouldBe false
+
+    (al == Alias.justClass<Int>()) shouldBe true
+    (al.hashCode() == Alias.justClass<Int>().hashCode()) shouldBe true
+
+    (al == Alias.justClass<Long>()) shouldBe false
+    (al.hashCode() == Alias.justClass<Long>().hashCode()) shouldBe false
   }
 })
