@@ -41,8 +41,8 @@ internal class ExtensionTest : FunSpec({
 
     val specV2 = insertOn(
       Human::id setTo 10L,
-      Human::name setTo "10",
-      Human::age setTo 29L,
+      Human::name setTo "Foo",
+      Human::age setTo 29,
     )
 
     spec.alias shouldBe specV2.alias

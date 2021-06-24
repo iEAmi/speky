@@ -4,7 +4,6 @@ import com.github.speky.core.Lens
 import com.github.speky.core.specification.Filter
 import com.github.speky.core.specification.Order
 import com.github.speky.core.specification.Value
-import kotlin.internal.Exact
 import kotlin.reflect.KProperty1 as KProp
 
 /**
@@ -57,8 +56,9 @@ inline infix fun <reified T, reified R> KProp<T, @Exact R>.gt(value: R): Filter.
  *
  * @see [Filter.gte]
  */
-inline infix fun <reified T, reified R> KProp<T, @Exact R>.gte(value: R): Filter.GreaterThanEqual<T, R> =
-  Filter.gte(on(), value)
+inline infix fun <reified T, reified R> KProp<T, @Exact R>.gte(
+  value: R
+): Filter.GreaterThanEqual<T, R> = Filter.gte(on(), value)
 
 /**
  * Extension-function on [KProp].
@@ -73,8 +73,9 @@ inline infix fun <reified T, reified R> KProp<T, @Exact R>.lt(value: R): Filter.
  *
  * @see [Filter.lte]
  */
-inline infix fun <reified T, reified R> KProp<T, @Exact R>.lte(value: R): Filter.LessThanEqual<T, R> =
-  Filter.lte(on(), value)
+inline infix fun <reified T, reified R> KProp<T, @Exact R>.lte(
+  value: R
+): Filter.LessThanEqual<T, R> = Filter.lte(on(), value)
 
 /**
  * Extension-function on [KProp].

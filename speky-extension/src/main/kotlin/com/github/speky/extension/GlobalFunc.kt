@@ -22,4 +22,3 @@ inline fun <reified T> insertOn(vararg values: Value<T, *>): Sink.Insert<T> =
  */
 inline fun <reified T> updateOn(vararg values: Value<T, *>): Sink.Update<T> =
   Specification.updateOn(*values)
-
