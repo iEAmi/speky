@@ -3,6 +3,7 @@ package com.github.speky.extenstion
 import com.github.speky.core.Lens
 import com.github.speky.core.specification.Filter
 import com.github.speky.core.specification.Order
+import com.github.speky.core.specification.Value
 import com.github.speky.extension.*
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -119,5 +120,13 @@ internal class KPropertyExtTest : FunSpec({
     endsWith.shouldBeInstanceOf<Filter.EndsWith<Person>>()
     endsWith.value shouldBe filter.value
     endsWith.lens shouldBe filter.lens
+  }
+
+  test("KProperty1.setTo() should return same value as Value.of") {
+    val setTo = Person::name setTo "Foo"
+    val value = Value.of<Person, String>("name", "Foo")
+
+    setTo.value shouldBe value.value
+    setTo.lens shouldBe value.lens
   }
 })

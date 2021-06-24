@@ -2,3 +2,7 @@ dependencies {
   compileOnly(project(":speky-core"))
   testImplementation(project(":speky-core"))
 }
+
+compileKotlin {
+  kotlinOptions.freeCompilerArgs = ["Xallow-kotlin-package"]
+}

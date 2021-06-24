@@ -3,6 +3,8 @@ package com.github.speky.extension
 import com.github.speky.core.Lens
 import com.github.speky.core.specification.Filter
 import com.github.speky.core.specification.Order
+import com.github.speky.core.specification.Value
+import kotlin.internal.Exact
 import kotlin.reflect.KProperty1 as KProp
 
 /**
@@ -31,7 +33,7 @@ inline fun <reified T, reified R> KProp<T, R>.desc(): Order.Descending<T, R> = O
  *
  * @see [Filter.eq]
  */
-inline infix fun <reified T, reified R> KProp<T, R>.eq(value: R): Filter.Equal<T, R> =
+inline infix fun <reified T, reified R> KProp<T, @Exact R>.eq(value: R): Filter.Equal<T, R> =
   Filter.eq(on(), value)
 
 /**
@@ -39,7 +41,7 @@ inline infix fun <reified T, reified R> KProp<T, R>.eq(value: R): Filter.Equal<T
  *
  * @see [Filter.neq]
  */
-inline infix fun <reified T, reified R> KProp<T, R>.neq(value: R): Filter.NotEqual<T, R> =
+inline infix fun <reified T, reified R> KProp<T, @Exact R>.neq(value: R): Filter.NotEqual<T, R> =
   Filter.neq(on(), value)
 
 /**
@@ -47,7 +49,7 @@ inline infix fun <reified T, reified R> KProp<T, R>.neq(value: R): Filter.NotEqu
  *
  * @see [Filter.gt]
  */
-inline infix fun <reified T, reified R> KProp<T, R>.gt(value: R): Filter.GreaterThan<T, R> =
+inline infix fun <reified T, reified R> KProp<T, @Exact R>.gt(value: R): Filter.GreaterThan<T, R> =
   Filter.gt(on(), value)
 
 /**
@@ -55,7 +57,7 @@ inline infix fun <reified T, reified R> KProp<T, R>.gt(value: R): Filter.Greater
  *
  * @see [Filter.gte]
  */
-inline infix fun <reified T, reified R> KProp<T, R>.gte(value: R): Filter.GreaterThanEqual<T, R> =
+inline infix fun <reified T, reified R> KProp<T, @Exact R>.gte(value: R): Filter.GreaterThanEqual<T, R> =
   Filter.gte(on(), value)
 
 /**
@@ -63,7 +65,7 @@ inline infix fun <reified T, reified R> KProp<T, R>.gte(value: R): Filter.Greate
  *
  * @see [Filter.lt]
  */
-inline infix fun <reified T, reified R> KProp<T, R>.lt(value: R): Filter.LessThan<T, R> =
+inline infix fun <reified T, reified R> KProp<T, @Exact R>.lt(value: R): Filter.LessThan<T, R> =
   Filter.lt(on(), value)
 
 /**
@@ -71,7 +73,7 @@ inline infix fun <reified T, reified R> KProp<T, R>.lt(value: R): Filter.LessTha
  *
  * @see [Filter.lte]
  */
-inline infix fun <reified T, reified R> KProp<T, R>.lte(value: R): Filter.LessThanEqual<T, R> =
+inline infix fun <reified T, reified R> KProp<T, @Exact R>.lte(value: R): Filter.LessThanEqual<T, R> =
   Filter.lte(on(), value)
 
 /**
@@ -105,3 +107,9 @@ inline infix fun <reified T> KProp<T, String>.startsWith(value: String): Filter.
  */
 inline infix fun <reified T> KProp<T, String>.endsWith(value: String): Filter.EndsWith<T> =
   Filter.endsWith(on(), value)
+
+/**
+ * Extension-function on [KProp]. Converts a [KProp] to [Value].
+ */
+inline infix fun <reified T, reified R> KProp<T, @Exact R>.setTo(value: R): Value<T, R> =
+  Value.of(name, value)

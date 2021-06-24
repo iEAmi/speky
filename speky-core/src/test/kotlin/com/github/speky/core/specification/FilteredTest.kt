@@ -6,9 +6,9 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 
 internal class FilteredTest : FunSpec({
-  test("Source.Single.order() should return Ordered") {
+  test("Filtered.order() should return Ordered") {
     val spec = Specification.from<Int>("0").select()
-    val filtered = spec.filter(Filter.neq(Lens.on<Int, String>("name"), "g"))
+    val filtered = spec.filter(Filter.neq(Lens.on("name"), "g"))
     val ordered = filtered.order(Order.asc(Lens.on<Int, String>("name")))
 
     ordered.shouldBeInstanceOf<Ordered<Int, String>>()
