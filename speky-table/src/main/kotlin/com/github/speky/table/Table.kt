@@ -87,7 +87,7 @@ abstract class Table<T>(private val tableName: String) {
     Column(columnName, this, lens, DBType.Timestampz).apply { registerColumn(this) }
 
   private fun registerColumn(column: Column<T, *>) {
-    require(columns.any { it.name == column.name }) { "Duplicate column '${column.name}'" }
+    require(columns.any { it.name == column.name }.not()) { "Duplicate column '${column.name}'" }
 
     columns.add(column)
   }
