@@ -1,6 +1,6 @@
 buildscript {
   ext {
-    kotlinVersion = "1.5.10"
+    kotlinVersion = "1.5.20"
     detektVersion = "1.17.1"
     kotestVersion = "4.6.0"
     jacocoVersion = "0.8.7"
