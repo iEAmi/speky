@@ -4,5 +4,5 @@ dependencies {
 }
 
 compileKotlin {
-  kotlinOptions.freeCompilerArgs = ["Xallow-kotlin-package"]
+  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }
