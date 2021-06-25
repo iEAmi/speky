@@ -1,6 +1,9 @@
 dependencies {
   compileOnly(project(":speky-core"))
+  compileOnly(project(":speky-table"))
+
   testImplementation(project(":speky-core"))
+  testImplementation(project(":speky-table"))
 }
 
 compileKotlin {
