@@ -1,7 +1,9 @@
 package com.github.speky.table
 
 /**
- * Raw column type in database.
+ * Raw sql type in relational database.
+ *
+ * @see [java.sql.Types]
  */
 sealed interface SqlType {
 

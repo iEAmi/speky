@@ -1,5 +1,6 @@
 package com.github.speky.table
 
+import com.github.speky.core.ClassRef
 import com.github.speky.core.Lens
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
@@ -16,7 +17,7 @@ internal class TableTest : FunSpec({
       val id = bigint("id", Lens.on("id"))
       val idAgain = bigint("id", Lens.on("id"))
 
-      override fun foo() {
+      override fun constructorRef(): ConstructorRef<Person> {
         TODO("Not yet implemented")
       }
     }
@@ -53,23 +54,14 @@ internal class TableTest : FunSpec({
     table.timestamp.name shouldBe "timestamp"
     table.timestampz.name shouldBe "timestampz"
 
-    table.id.table shouldBe table
-    table.name.table shouldBe table
-    table.age.table shouldBe table
-    table.text.table shouldBe table
-    table.boolean.table shouldBe table
-    table.uuid.table shouldBe table
-    table.timestamp.table shouldBe table
-    table.timestampz.table shouldBe table
-
-    table.id.dbType shouldBe DBType.Bigint
-    table.name.dbType shouldBe DBType.Varchar
-    table.age.dbType shouldBe DBType.Int
-    table.text.dbType shouldBe DBType.Text
-    table.boolean.dbType shouldBe DBType.Boolean
-    table.uuid.dbType shouldBe DBType.UUID
-    table.timestamp.dbType shouldBe DBType.Timestamp
-    table.timestampz.dbType shouldBe DBType.Timestampz
+    table.id.sqlType shouldBe SqlType.Bigint
+    table.name.sqlType shouldBe SqlType.Varchar
+    table.age.sqlType shouldBe SqlType.Integer
+    table.text.sqlType shouldBe SqlType.LongVarchar
+    table.boolean.sqlType shouldBe SqlType.Boolean
+    table.uuid.sqlType shouldBe SqlType.Other
+    table.timestamp.sqlType shouldBe SqlType.Timestamp
+    table.timestampz.sqlType shouldBe SqlType.TimestampWithTimeZone
 
     table.id.lens shouldBe Lens.on("id")
     table.name.lens shouldBe Lens.on("name")
@@ -82,7 +74,8 @@ internal class TableTest : FunSpec({
   }
 })
 
-private data class Person(val id: Long, val name: String, val age: Int)
+private data class Address(val country: String, val province: String, val city: String, val no: Int)
+private data class Person(val id: Long, val name: String, val age: Int, val address: Address)
 private class Persons : Table<Person>("persons") {
   val id = bigint("person_id", Lens.on("id"))
   val name = varchar("person_name", Lens.on("name"))
@@ -94,7 +87,25 @@ private class Persons : Table<Person>("persons") {
   val timestamp = timestamp("timestamp", Lens.on("timestamp"))
   val timestampz = timestampz("timestampz", Lens.on("timestampz"))
 
-  override fun foo() {
-    TODO("Not yet implemented")
+  val address = embedded(AddressEmbedded(Lens.on("address")))
+
+  override fun constructorRef(): ConstructorRef<Person> {
+    val fRef: FunctionRef<Person> = FunctionRef(3) { ::Person.call(it) }
+
+    return ConstructorRef(fRef, id, name, age)
+  }
+
+  class AddressEmbedded<T>(lens: Lens<Address, T>) :
+    Embedded<Address, T>("address_", lens, ClassRef.of()) {
+    val country = varchar("country", Lens.on("country"))
+    val province = varchar("province", Lens.on("province"))
+    val city = varchar("city", Lens.on("city"))
+    val no = int("no", Lens.on("no"))
+
+    override fun constructorRef(): ConstructorRef<Address> {
+      val fRef: FunctionRef<Address> = FunctionRef(4) { ::Address.call(it) }
+
+      return ConstructorRef(fRef, country, province, city, no)
+    }
   }
 }

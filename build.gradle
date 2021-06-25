@@ -55,7 +55,7 @@ subprojects { project ->
     kotlinOptions.languageVersion = "1.5"
     kotlinOptions.apiVersion = "1.5"
     kotlinOptions.jvmTarget = "11"
-    kotlinOptions.allWarningsAsErrors = true
+    kotlinOptions.allWarningsAsErrors = false
   }
 
   jacocoTestReport {

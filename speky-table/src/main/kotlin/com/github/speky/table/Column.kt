@@ -6,7 +6,6 @@ import com.github.speky.core.Lens
  * Defines column in relational databases.
  *
  * @property name of the column in database
- * @property table [Table] of the column
  * @property lens [Lens] points to property of this column
  * @property sqlType type of the column in database
  *
@@ -15,7 +14,6 @@ import com.github.speky.core.Lens
  */
 data class Column<T, R>(
   val name: String,
-  val table: Table<T>,
   val lens: Lens<R, T>,
   val sqlType: SqlType
 )

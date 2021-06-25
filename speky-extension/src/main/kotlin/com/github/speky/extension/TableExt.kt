@@ -14,7 +14,7 @@ abstract class RichTable<T>(tableName: String, val classRef: ClassRef<T>) : Tabl
   inline fun <reified R> KProperty1<T, R>.`as`(
     sqlType: SqlType,
     columnName: String = name
-  ): Column<T, R> = Column(columnName, this@RichTable, lensOf(), sqlType)
+  ): Column<T, R> = Column(columnName, lensOf(), sqlType)
 
   fun KProperty1<T, Int>.asInt(columnName: String = name): Column<T, Int> =
     `as`(SqlType.Integer, columnName)
