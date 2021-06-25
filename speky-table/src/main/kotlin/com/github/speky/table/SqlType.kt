@@ -1,11 +1,43 @@
 package com.github.speky.table
 
+import com.github.speky.core.Show
+
 /**
  * Raw sql type in relational database.
  *
  * @see [java.sql.Types]
  */
 sealed interface SqlType {
+
+  companion object {
+    /**
+     * [Show] instance for [SqlType].
+     */
+    val show: Show<SqlType> = Show {
+      when (this) {
+        Array                 -> Array::class.simpleName!!.lowercase()
+        Bigint                -> Bigint::class.simpleName!!.lowercase()
+        Binary                -> Binary::class.simpleName!!.lowercase()
+        Blob                  -> Blob::class.simpleName!!.lowercase()
+        Boolean               -> Boolean::class.simpleName!!.lowercase()
+        Date                  -> Date::class.simpleName!!.lowercase()
+        Decimal               -> Decimal::class.simpleName!!.lowercase()
+        Double                -> Double::class.simpleName!!.lowercase()
+        Float                 -> Float::class.simpleName!!.lowercase()
+        Integer               -> Integer::class.simpleName!!.lowercase()
+        LongVarchar           -> LongVarchar::class.simpleName!!.lowercase()
+        Numeric               -> Numeric::class.simpleName!!.lowercase()
+        Other                 -> Other::class.simpleName!!.lowercase()
+        Real                  -> Real::class.simpleName!!.lowercase()
+        SmallInt              -> SmallInt::class.simpleName!!.lowercase()
+        Time                  -> Time::class.simpleName!!.lowercase()
+        TimeWithTimeZone      -> TimeWithTimeZone::class.simpleName!!.lowercase()
+        Timestamp             -> Timestamp::class.simpleName!!.lowercase()
+        TimestampWithTimeZone -> TimestampWithTimeZone::class.simpleName!!.lowercase()
+        Varchar               -> Varchar::class.simpleName!!.lowercase()
+      }
+    }
+  }
 
   /**
    * @see [java.sql.Types.SMALLINT].

@@ -90,22 +90,35 @@ private class Persons : Table<Person>("persons") {
   val address = embedded(AddressEmbedded(Lens.on("address")))
 
   override fun constructorRef(): ConstructorRef<Person> {
-    val fRef: FunctionRef<Person> = FunctionRef(3) { ::Person.call(it) }
+    val fRef: FunctionRef<Person> = FunctionRef(4) { ::Person.call(it) }
 
-    return ConstructorRef(fRef, id, name, age)
+    return ConstructorRef(
+      fRef,
+      ConstructorRef.Parameter.of(id),
+      ConstructorRef.Parameter.of(name),
+      ConstructorRef.Parameter.of(age),
+      ConstructorRef.Parameter.of(address)
+    )
   }
+}
 
-  class AddressEmbedded<T>(lens: Lens<Address, T>) :
-    Embedded<Address, T>("address_", lens, ClassRef.of()) {
-    val country = varchar("country", Lens.on("country"))
-    val province = varchar("province", Lens.on("province"))
-    val city = varchar("city", Lens.on("city"))
-    val no = int("no", Lens.on("no"))
+private class AddressEmbedded<T>(
+  lens: Lens<Address, T>
+) : Embedded<Address, T>("address_", lens, ClassRef.of()) {
+  val country = varchar("country", Lens.on("country"))
+  val province = varchar("province", Lens.on("province"))
+  val city = varchar("city", Lens.on("city"))
+  val no = int("no", Lens.on("no"))
 
-    override fun constructorRef(): ConstructorRef<Address> {
-      val fRef: FunctionRef<Address> = FunctionRef(4) { ::Address.call(it) }
+  override fun constructorRef(): ConstructorRef<Address> {
+    val fRef: FunctionRef<Address> = FunctionRef(4) { ::Address.call(it) }
 
-      return ConstructorRef(fRef, country, province, city, no)
-    }
+    return ConstructorRef(
+      fRef,
+      ConstructorRef.Parameter.of(country),
+      ConstructorRef.Parameter.of(province),
+      ConstructorRef.Parameter.of(city),
+      ConstructorRef.Parameter.of(no)
+    )
   }
 }

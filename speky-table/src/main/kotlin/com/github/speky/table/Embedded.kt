@@ -2,6 +2,7 @@ package com.github.speky.table
 
 import com.github.speky.core.ClassRef
 import com.github.speky.core.Lens
+import com.github.speky.core.Show
 
 /**
  * Embedded type in table. [Embedded] only could defined in context of a [Table].
@@ -17,4 +18,12 @@ abstract class Embedded<E, T>(
   private val columnPrefix: String,
   private val lens: Lens<E, T>,
   internal val classRef: ClassRef<E>,
-) : ColumnDefinition<E>(), Constructible<E>
+) : ColumnDefinition<E>(), Constructible<E> {
+  companion object {
+    /**
+     * [Show] instance for [Embedded].
+     */
+    val show: Show<Embedded<*, *>> =
+      Show { "Embedded ${lens.propertyRef.name}: ${classRef.name}" }
+  }
+}

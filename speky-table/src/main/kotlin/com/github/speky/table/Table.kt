@@ -11,9 +11,9 @@ abstract class Table<T>(private val tableName: String) : ColumnDefinition<T>(), 
   private val embeds: MutableSet<Embedded<*, T>> = mutableSetOf()
 
   /**
-   * Register
+   * Registers new [Embedded].
    */
-  fun <E> embedded(embedded: Embedded<E, T>): Embedded<E, T> =
+  fun <E, EE : Embedded<E, T>> embedded(embedded: EE): EE =
     embedded.apply { registerEmbedded(this) }
 
   @PublishedApi
