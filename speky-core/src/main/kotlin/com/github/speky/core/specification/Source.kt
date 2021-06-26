@@ -23,7 +23,7 @@ sealed class Source<T> private constructor(override val alias: Alias<T>) : Speci
    * Present single [Source] [Specification] without any join.
    * like <code>From table as alias</code> in sql.
    */
-  class Single<T>(alias: Alias<T>) : Source<T>(alias) {
+  class Single<T>(override val alias: Alias.Single<T>) : Source<T>(alias) {
 
     /**
      * CrossJoin this source with [R]
