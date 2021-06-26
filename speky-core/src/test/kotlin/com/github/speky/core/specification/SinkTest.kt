@@ -28,6 +28,10 @@ internal class SinkTest : FunSpec({
     insert.values shouldContain Value.of("name", "Ahmad")
   }
 
+  test("insert without columns should throw") {
+    shouldThrow<NoSuchElementException> { Sink.insert<Table1>(emptyList()) }
+  }
+
   test("inconsistent values in Insert") {
     val e = shouldThrow<IllegalArgumentException> {
       Sink.insert<Table1>(

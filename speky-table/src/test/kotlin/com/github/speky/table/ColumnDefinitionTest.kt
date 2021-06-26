@@ -4,6 +4,7 @@ import com.github.speky.core.Lens
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 
 internal class ColumnDefinitionTest : FunSpec({
   test("column name should be valid") {
@@ -30,6 +31,7 @@ internal class ColumnDefinitionTest : FunSpec({
     definition.boolean.name shouldBe "boolean"
     definition.timeWithTimeZone.name shouldBe "timeWithTimeZone"
     definition.timestampWithTimeZone.name shouldBe "timestampWithTimeZone"
+    definition.custom.name shouldBe "mobile"
   }
 
   test("column lens should be valid") {
@@ -56,6 +58,7 @@ internal class ColumnDefinitionTest : FunSpec({
     definition.boolean.lens shouldBe Lens.on("name")
     definition.timeWithTimeZone.lens shouldBe Lens.on("name")
     definition.timestampWithTimeZone.lens shouldBe Lens.on("name")
+    definition.custom.lens shouldBe Lens.on("mobile")
   }
 
   test("column sqlType should be valid") {
@@ -82,11 +85,46 @@ internal class ColumnDefinitionTest : FunSpec({
     definition.boolean.sqlType shouldBe SqlType.Boolean
     definition.timeWithTimeZone.sqlType shouldBe SqlType.TimeWithTimeZone
     definition.timestampWithTimeZone.sqlType shouldBe SqlType.TimestampWithTimeZone
+    definition.custom.sqlType shouldBe SqlType.Varchar
+  }
+
+  test("column transformer should be valid") {
+    shouldNotThrow<IllegalArgumentException> { MyColumnDefinition() }
+    val definition = MyColumnDefinition()
+
+    definition.smallInt.transformer shouldBe SqlValue.Short.transformer
+    definition.integer.transformer shouldBe SqlValue.Int.transformer
+    definition.bigint.transformer shouldBe SqlValue.Bigint.transformer
+    definition.float.transformer shouldBe SqlValue.Float.transformer
+    definition.real.transformer shouldBe SqlValue.Real.transformer
+    definition.double.transformer shouldBe SqlValue.Double.transformer
+    definition.numeric.transformer shouldBe SqlValue.Numeric.transformer
+    definition.decimal.transformer shouldBe SqlValue.Decimal.transformer
+    definition.varchar.transformer shouldBe SqlValue.Varchar.transformer
+    definition.longVarchar.transformer shouldBe SqlValue.Text.transformer
+    definition.date.transformer shouldBe SqlValue.Date.transformer
+    definition.time.transformer shouldBe SqlValue.Time.transformer
+    definition.timestamp.transformer shouldBe SqlValue.Timestamp.transformer
+    definition.binary.transformer shouldBe SqlValue.Binary.transformer
+    definition.other.transformer shouldBe SqlValue.UUID.transformer
+    definition.array.transformer shouldBe SqlValue.Array.transformer
+    definition.blob.transformer shouldBe SqlValue.Blob.transformer
+    definition.boolean.transformer shouldBe SqlValue.Boolean.transformer
+    definition.timeWithTimeZone.transformer shouldBe SqlValue.Timez.transformer
+    definition.timestampWithTimeZone.transformer shouldBe SqlValue.Timestampz.transformer
+    definition.custom.transformer.shouldBeInstanceOf<MobileTransformer>()
   }
 }) {
 
+ private data class Mobile(val value: String)
+
+  private class MobileTransformer : ValueTransformer<Mobile, SqlValue.Varchar> {
+    override fun toSqlValue(value: Mobile): SqlValue.Varchar = SqlValue.Varchar(value.value)
+    override fun fromSqlValue(sqlValue: SqlValue.Varchar): Mobile = Mobile(sqlValue.value)
+  }
+
   private class Human
-  private class MyColumnDefinition() : Table<Human>("humans") {
+  private class MyColumnDefinition : Table<Human>("humans") {
     val smallInt = short("smallInt", Lens.on("name"))
     val integer = int("integer", Lens.on("name"))
     val bigint = bigint("bigint", Lens.on("name"))
@@ -107,6 +145,8 @@ internal class ColumnDefinitionTest : FunSpec({
     val boolean = boolean("boolean", Lens.on("name"))
     val timeWithTimeZone = timez("timeWithTimeZone", Lens.on("name"))
     val timestampWithTimeZone = timestampz("timestampWithTimeZone", Lens.on("name"))
+
+    val custom = custom("mobile", Lens.on("mobile"), MobileTransformer())
     override fun constructorRef(): ConstructorRef<Human> {
       TODO("Not yet implemented")
     }

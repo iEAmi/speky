@@ -19,7 +19,8 @@ internal class ConstructorRefTest : FunSpec({
       Column(
         "name",
         Lens.on<String, Int>("length"),
-        SqlType.Integer
+        SqlType.Integer,
+        SqlValue.Int.transformer
       )
     )
     val embeddedParam = ConstructorRef.Parameter.EmbeddedParam(embedded)
@@ -36,13 +37,14 @@ internal class ConstructorRefTest : FunSpec({
         TODO("Not yet implemented")
       }
     }
-    val column = Column("name", Lens.on<String, Int>("length"), SqlType.Integer)
+    val column = Column("name", Lens.on<String, Int>("length"),
+      SqlType.Integer, SqlValue.Int.transformer)
 
     val normalParam = ConstructorRef.Parameter.NormalParam(column)
     val embeddedParam = ConstructorRef.Parameter.EmbeddedParam(embedded)
 
     ConstructorRef.Parameter.of(column)
-      .shouldBeInstanceOf<ConstructorRef.Parameter.NormalParam<String, Int>>()
+      .shouldBeInstanceOf<ConstructorRef.Parameter.NormalParam<String, Int, SqlValue.Int>>()
 
     ConstructorRef.Parameter.of(embedded)
       .shouldBeInstanceOf<ConstructorRef.Parameter.EmbeddedParam<String, Int>>()
@@ -53,10 +55,11 @@ internal class ConstructorRefTest : FunSpec({
 
   test("inconsistent arity should throw") {
     val e = shouldThrow<IllegalArgumentException> {
-      val f = { a: Int -> "" }
+      val f = { _: Int -> "" }
       val fRef = FunctionRef(1) { f.invoke(it[0] as Int) }
 
-      val column = Column("name", Lens.on<String, Int>("length"), SqlType.Integer)
+      val column = Column("name", Lens.on<String, Int>("length"),
+        SqlType.Integer, SqlValue.Int.transformer)
 
       ConstructorRef(fRef, ConstructorRef.Parameter.of(column), ConstructorRef.Parameter.of(column))
     }

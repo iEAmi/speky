@@ -10,5 +10,5 @@ interface Constructible<T> {
   /**
    * Gets [ConstructorRef].
    */
-  fun constructorRef() : ConstructorRef<T>
+  fun constructorRef(): ConstructorRef<T>
 }

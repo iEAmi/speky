@@ -15,6 +15,7 @@ import com.github.speky.core.Show
  * @param T type of the table
  */
 abstract class Embedded<E, T>(
+  @Suppress("UnusedPrivateMember")
   private val columnPrefix: String,
   private val lens: Lens<E, T>,
   internal val classRef: ClassRef<E>,
