@@ -22,7 +22,9 @@ class ConstructorRef<T>(
     require(functionRef.arity == parameters.size) { "Inconsistent arity" }
   }
 
-  // TODO: implement it
+  /**
+   * Not implemented yet
+   */
   override fun invoke(table: Table<T>): T = functionRef.invoke()
 
   /**
