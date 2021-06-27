@@ -23,7 +23,7 @@ internal class AliasTest : FunSpec({
     }
 
     e.message shouldNotBe null
-    e.message!! shouldBe "JustClassRef could not bew Single"
+    e.message!! shouldBe "JustClassRef could not be Single"
   }
 
   test("flatten Alias.Multiply should return at least two") {

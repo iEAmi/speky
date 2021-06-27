@@ -2,6 +2,7 @@ package com.github.speky.table
 
 import com.github.speky.core.ClassRef
 import com.github.speky.core.Lens
+import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -24,6 +25,44 @@ internal class TableTest : FunSpec({
 
     e.message shouldNotBe null
     e.message!! shouldBe "Duplicate column 'id'"
+  }
+
+  test("register embedded") {
+    class Names : Table<Person>("pp") {
+      val address = embedded(AddressEmbedded(Lens.on("address")))
+
+      override fun constructorRef(): ConstructorRef<Person> {
+        TODO("Not yet implemented")
+      }
+    }
+
+    shouldNotThrow<IllegalArgumentException> {
+      Names()
+    }
+  }
+
+  test("duplicate embedded should fails") {
+    class Names : Table<Person>("pp") {
+      val address = embedded(AddressEmbedded(Lens.on("address")))
+      val addressAgain = embedded(AddressEmbedded(Lens.on("address")))
+
+      override fun constructorRef(): ConstructorRef<Person> {
+        TODO("Not yet implemented")
+      }
+    }
+
+    val e = shouldThrow<IllegalArgumentException> {
+      Names()
+    }
+
+    e.message shouldNotBe null
+    e.message!! shouldBe "Duplicate embedded 'Address'"
+  }
+
+  test("toString test") {
+    val table = Persons()
+
+    table.toString() shouldBe "Table(tableName='persons')"
   }
 })
 

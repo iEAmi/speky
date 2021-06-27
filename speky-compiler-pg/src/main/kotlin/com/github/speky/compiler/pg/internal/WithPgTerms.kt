@@ -1,7 +1,10 @@
-@file:Suppress("PropertyName", "ObjectPropertyName")
+@file:Suppress("StringLiteralDuplication", "ComplexInterface")
 
 package com.github.speky.compiler.pg.internal
 
+/**
+ * Internal helper class.
+ */
 internal interface WithPgTerms {
   fun select(): PgTerm = SELECT
   fun all(prefix: String = " ", postFix: String = ""): PgTerm = PgTerm(prefix) + ALL + postFix
@@ -26,24 +29,35 @@ internal interface WithPgTerms {
 
   fun comma(postFix: String = " "): PgTerm = COMMA + postFix
   fun dot(): PgTerm = DOT
-  fun eq(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + `=` + postFix
+  fun eq(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + EQ + postFix
+  fun neq(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + NEQ + postFix
+  fun gt(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + GT + postFix
+  fun gte(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + GTE + postFix
+  fun lt(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + LT + postFix
+  fun lte(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + LTE + postFix
+  fun like(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + LIKE + postFix
 
-  companion object {
-    val SELECT: PgTerm = PgTerm("SELECT")
-    val ALL: PgTerm = PgTerm("*")
-    val FROM: PgTerm = PgTerm("FROM")
-    val WHERE: PgTerm = PgTerm("WHERE")
-    val AS: PgTerm = PgTerm("AS")
-    val LIMIT: PgTerm = PgTerm("LIMIT")
-    val OFFSET: PgTerm = PgTerm("OFFSET")
-    val CROSS_JOIN: PgTerm = PgTerm("CROSS JOIN")
-    val INNER_JOIN: PgTerm = PgTerm("INNER JOIN")
-    val ORDER_BY: PgTerm = PgTerm("ORDER BY")
-    val ON: PgTerm = PgTerm("ON")
-    val DESC: PgTerm = PgTerm("DESC")
-
-    val DOT: PgTerm = PgTerm(".")
-    val COMMA: PgTerm = PgTerm(",")
-    val `=`: PgTerm = PgTerm("=")
+  private companion object {
+    private val SELECT: PgTerm = PgTerm("SELECT")
+    private val ALL: PgTerm = PgTerm("*")
+    private val FROM: PgTerm = PgTerm("FROM")
+    private val WHERE: PgTerm = PgTerm("WHERE")
+    private val AS: PgTerm = PgTerm("AS")
+    private val LIMIT: PgTerm = PgTerm("LIMIT")
+    private val OFFSET: PgTerm = PgTerm("OFFSET")
+    private val CROSS_JOIN: PgTerm = PgTerm("CROSS JOIN")
+    private val INNER_JOIN: PgTerm = PgTerm("INNER JOIN")
+    private val ORDER_BY: PgTerm = PgTerm("ORDER BY")
+    private val ON: PgTerm = PgTerm("ON")
+    private val DESC: PgTerm = PgTerm("DESC")
+    private val DOT: PgTerm = PgTerm(".")
+    private val COMMA: PgTerm = PgTerm(",")
+    private val EQ: PgTerm = PgTerm("=")
+    private val NEQ: PgTerm = PgTerm("!=")
+    private val GT: PgTerm = PgTerm(">")
+    private val GTE: PgTerm = PgTerm(">=")
+    private val LT: PgTerm = PgTerm("<")
+    private val LTE: PgTerm = PgTerm("<=")
+    private val LIKE: PgTerm = PgTerm("LIKE")
   }
 }

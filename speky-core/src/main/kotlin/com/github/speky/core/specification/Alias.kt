@@ -22,7 +22,8 @@ sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
     when (this@Alias) {
       is Single            -> this += this@Alias
       is Multiply<*, *, *> -> this += this@Alias.left.flatten() + this@Alias.right.flatten()
-      is JustClassRef      -> throw UnsupportedOperationException("JustClassRef could not bew Single")
+      is JustClassRef      ->
+        throw UnsupportedOperationException("JustClassRef could not be Single")
     }
   }
 

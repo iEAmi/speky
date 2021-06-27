@@ -11,6 +11,12 @@ import com.github.speky.core.specification.Sized
 import com.github.speky.core.specification.Source
 import com.github.speky.core.specification.Specification
 
+/**
+ * [SpecificationCompiler] implementation that compiles [Specification] to postgresql.
+ *
+ * @property tableResolver for resolving table names
+ * @property columnResolver for resolving column name
+ */
 class PgSpecificationCompiler(
   private val tableResolver: TableResolver,
   private val columnResolver: ColumnResolver
@@ -25,6 +31,7 @@ class PgSpecificationCompiler(
   private val orderedCompiler: OrderedCompiler by lazy { OrderedCompiler(this) }
   private val sizedCompiler: SizedCompiler by lazy { SizedCompiler(this) }
 
+  @Suppress("LabeledExpression")
   override fun Specification<*>.compile(): String = when (this) {
     is Filtered<*, *> -> with(filteredCompiler) { this@compile.compile() }
     is Ordered<*, *>  -> with(orderedCompiler) { this@compile.compile() }

@@ -18,9 +18,9 @@ abstract class Table<T>(private val tableName: String) : ColumnDefinition<T>(), 
 
   @PublishedApi
   internal fun registerEmbedded(embedded: Embedded<*, T>) {
-    require(embeds.any { it.classRef == embedded.classRef }.not()) {
-      "Duplicate embedded '${embedded.classRef.name}'"
-    }
+    require(embeds.any {
+      it.classRef == embedded.classRef && it.columnPrefix == embedded.columnPrefix
+    }.not()) { "Duplicate embedded '${embedded.classRef.name}'" }
 
     embeds.add(embedded)
   }

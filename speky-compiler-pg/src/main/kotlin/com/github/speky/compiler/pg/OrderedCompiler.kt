@@ -9,6 +9,9 @@ import com.github.speky.core.specification.Order.Ascending
 import com.github.speky.core.specification.Order.Descending
 import com.github.speky.core.specification.Ordered
 
+/**
+ * Internal compiler for [Ordered].
+ */
 internal class OrderedCompiler(private val compiler: PgSpecificationCompiler) :
   PgAwareCompiler<Ordered<*, *>>, ColumnResolver by compiler {
 

@@ -16,7 +16,7 @@ import com.github.speky.core.Show
  */
 abstract class Embedded<E, T>(
   @Suppress("UnusedPrivateMember")
-  private val columnPrefix: String,
+  internal val columnPrefix: String,
   private val lens: Lens<E, T>,
   internal val classRef: ClassRef<E>,
 ) : ColumnDefinition<E>(), Constructible<E> {

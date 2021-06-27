@@ -1,9 +1,12 @@
 package com.github.speky.compiler.pg
 
-import com.github.speky.compiler.pg.resolve.TableResolver
 import com.github.speky.compiler.pg.internal.PgTerm
+import com.github.speky.compiler.pg.resolve.TableResolver
 import com.github.speky.core.specification.Source
 
+/**
+ * Internal compiler for [Source].
+ */
 internal class SourceCompiler(private val compiler: PgSpecificationCompiler) :
   PgAwareCompiler<Source<*>>, TableResolver by compiler {
 

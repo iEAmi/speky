@@ -7,8 +7,10 @@ import com.github.speky.core.specification.Alias.JustClassRef
 /**
  * Find for [Alias] related to [PropertyRef].
  *
+ * @receiver [Alias]
+ *
  * @throws [UnsupportedOperationException] if this alias be [JustClassRef]
  */
 @Throws(UnsupportedOperationException::class)
 internal fun Alias<*>.find(prop: PropertyRef<*>): Alias.Single<*> =
-  flatten().single { it.classRef == prop.declaringClassRef }
+  flatten().first { it.classRef == prop.declaringClassRef }
