@@ -1,4 +1,4 @@
-package com.github.speky.compiler.pg
+package com.github.speky.compiler.pg.resolve
 
 import com.github.speky.core.specification.Alias
 

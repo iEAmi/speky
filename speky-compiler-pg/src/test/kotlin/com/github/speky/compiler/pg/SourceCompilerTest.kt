@@ -1,6 +1,9 @@
 package com.github.speky.compiler.pg
 
+import com.github.speky.compiler.pg.resolve.ColumnResolver
+import com.github.speky.compiler.pg.resolve.TableResolver
 import com.github.speky.core.Lens
+import com.github.speky.core.PropertyRef
 import com.github.speky.core.specification.Alias
 import com.github.speky.core.specification.Source
 import io.kotest.core.spec.style.FunSpec
@@ -9,7 +12,7 @@ import io.kotest.matchers.shouldBe
 internal class SourceCompilerTest : FunSpec({
   test("compiling Source.Single") {
     val source = Source.Single<Human>(Alias.of("hh"))
-    val compiler = SourceCompiler(PgSpecificationCompiler(MockTableResolver))
+    val compiler = SourceCompiler(PgSpecificationCompiler(MockTableResolver, MockColumnResolver))
 
     with(compiler) {
       source.compile().toString() shouldBe "\nFROM human AS hh"
@@ -19,7 +22,7 @@ internal class SourceCompilerTest : FunSpec({
   test("compiling Source.Mix.Multiply") {
     val source =
       Source.Mix.Multiply<Human, City, HumanCity>(Alias.of(Alias.of("hh"), Alias.of("cc")))
-    val compiler = SourceCompiler(PgSpecificationCompiler(MockTableResolver))
+    val compiler = SourceCompiler(PgSpecificationCompiler(MockTableResolver, MockColumnResolver))
 
     with(compiler) {
       source.compile().toString() shouldBe "\nFROM human AS hh, city AS cc"
@@ -29,7 +32,7 @@ internal class SourceCompilerTest : FunSpec({
   test("compiling Source.Mix.CrossJoin") {
     val source =
       Source.Mix.CrossJoin<Human, City, HumanCity>(Alias.of(Alias.of("hh"), Alias.of("cc")))
-    val compiler = SourceCompiler(PgSpecificationCompiler(MockTableResolver))
+    val compiler = SourceCompiler(PgSpecificationCompiler(MockTableResolver, MockColumnResolver))
 
     with(compiler) {
       source.compile().toString() shouldBe "\nFROM human AS hh\n\t\t CROSS JOIN city AS cc"
@@ -42,7 +45,7 @@ internal class SourceCompilerTest : FunSpec({
       leftSelector = Lens.on("id"),
       rightSelector = Lens.on("id")
     )
-    val compiler = SourceCompiler(PgSpecificationCompiler(MockTableResolver))
+    val compiler = SourceCompiler(PgSpecificationCompiler(MockTableResolver, MockColumnResolver))
 
     with(compiler) {
       source.compile()
@@ -55,5 +58,9 @@ internal class SourceCompilerTest : FunSpec({
   private class HumanCity(val id: Long)
   private object MockTableResolver : TableResolver {
     override fun resolveTableName(alias: Alias<*>): String = alias.classRef.name.lowercase()
+  }
+
+  private object MockColumnResolver : ColumnResolver {
+    override fun resolveColumnName(prop: PropertyRef<*>): String = prop.name
   }
 }

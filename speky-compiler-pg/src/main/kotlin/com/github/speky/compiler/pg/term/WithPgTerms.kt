@@ -3,6 +3,8 @@
 package com.github.speky.compiler.pg.term
 
 internal interface WithPgTerms {
+  fun select(): PgTerm = SELECT
+  fun all(prefix: String = " ", postFix: String = ""): PgTerm = PgTerm(prefix) + ALL + postFix
   fun from(prefix: String = "\n", postFix: String = " "): PgTerm = PgTerm(prefix) + FROM + postFix
   fun `as`(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + AS + postFix
   fun crossJoin(prefix: String = "\n\t\t ", postFix: String = " "): PgTerm =
@@ -18,6 +20,8 @@ internal interface WithPgTerms {
   fun eq(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + `=` + postFix
 
   companion object {
+    val SELECT: PgTerm = PgTerm("SELECT")
+    val ALL: PgTerm = PgTerm("*")
     val FROM: PgTerm = PgTerm("FROM")
     val AS: PgTerm = PgTerm("AS")
     val CROSS_JOIN: PgTerm = PgTerm("CROSS JOIN")

@@ -11,6 +11,18 @@ import com.github.speky.core.Show
  */
 sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
 
+  fun flatten(): List<Single<*>> {
+    val result = mutableListOf<Single<*>>()
+
+    when (this) {
+      is Single            -> result += this
+      is Multiply<*, *, *> -> result += this.left.flatten() + this.right.flatten()
+      is JustClassRef      -> TODO()
+    }
+
+    return result
+  }
+
   companion object {
     /**
      * [Show] instance for [Alias].

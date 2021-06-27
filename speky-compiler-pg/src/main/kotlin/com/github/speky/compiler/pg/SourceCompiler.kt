@@ -1,5 +1,6 @@
 package com.github.speky.compiler.pg
 
+import com.github.speky.compiler.pg.resolve.TableResolver
 import com.github.speky.compiler.pg.term.PgTerm
 import com.github.speky.core.specification.Source
 
