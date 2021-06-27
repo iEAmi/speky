@@ -7,6 +7,10 @@ internal interface WithPgTerms {
   fun all(prefix: String = " ", postFix: String = ""): PgTerm = PgTerm(prefix) + ALL + postFix
   fun from(prefix: String = "\n", postFix: String = " "): PgTerm = PgTerm(prefix) + FROM + postFix
   fun `as`(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + AS + postFix
+  fun limit(prefix: String = "\n", postFix: String = " "): PgTerm = PgTerm(prefix) + LIMIT + postFix
+  fun offset(prefix: String = " ", postFix: String = " "): PgTerm =
+    PgTerm(prefix) + OFFSET + postFix
+
   fun crossJoin(prefix: String = "\n\t\t ", postFix: String = " "): PgTerm =
     PgTerm(prefix) + CROSS_JOIN + postFix
 
@@ -28,9 +32,11 @@ internal interface WithPgTerms {
     val ALL: PgTerm = PgTerm("*")
     val FROM: PgTerm = PgTerm("FROM")
     val AS: PgTerm = PgTerm("AS")
+    val LIMIT: PgTerm = PgTerm("LIMIT")
+    val OFFSET: PgTerm = PgTerm("OFFSET")
     val CROSS_JOIN: PgTerm = PgTerm("CROSS JOIN")
     val INNER_JOIN: PgTerm = PgTerm("INNER JOIN")
-    val ORDER_BY : PgTerm = PgTerm("ORDER BY")
+    val ORDER_BY: PgTerm = PgTerm("ORDER BY")
     val ON: PgTerm = PgTerm("ON")
     val DESC: PgTerm = PgTerm("DESC")
 
