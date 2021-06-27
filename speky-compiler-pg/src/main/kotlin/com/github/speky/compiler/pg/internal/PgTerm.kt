@@ -1,6 +1,6 @@
 @file:Suppress("DANGEROUS_CHARACTERS", "ObjectPropertyName")
 
-package com.github.speky.compiler.pg.term
+package com.github.speky.compiler.pg.internal
 
 import com.github.speky.core.specification.Alias
 

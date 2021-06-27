@@ -1,6 +1,6 @@
 package com.github.speky.compiler.pg
 
-import com.github.speky.compiler.pg.term.PgTerm
+import com.github.speky.compiler.pg.internal.PgTerm
 import com.github.speky.core.specification.Alias
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
