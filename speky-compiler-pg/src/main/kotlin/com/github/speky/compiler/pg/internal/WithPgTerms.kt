@@ -6,6 +6,7 @@ internal interface WithPgTerms {
   fun select(): PgTerm = SELECT
   fun all(prefix: String = " ", postFix: String = ""): PgTerm = PgTerm(prefix) + ALL + postFix
   fun from(prefix: String = "\n", postFix: String = " "): PgTerm = PgTerm(prefix) + FROM + postFix
+  fun where(prefix: String = "\n", postFix: String = " "): PgTerm = PgTerm(prefix) + WHERE + postFix
   fun `as`(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + AS + postFix
   fun limit(prefix: String = "\n", postFix: String = " "): PgTerm = PgTerm(prefix) + LIMIT + postFix
   fun offset(prefix: String = " ", postFix: String = " "): PgTerm =
@@ -31,6 +32,7 @@ internal interface WithPgTerms {
     val SELECT: PgTerm = PgTerm("SELECT")
     val ALL: PgTerm = PgTerm("*")
     val FROM: PgTerm = PgTerm("FROM")
+    val WHERE: PgTerm = PgTerm("WHERE")
     val AS: PgTerm = PgTerm("AS")
     val LIMIT: PgTerm = PgTerm("LIMIT")
     val OFFSET: PgTerm = PgTerm("OFFSET")
