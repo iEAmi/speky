@@ -2,6 +2,7 @@ package com.github.speky.core.specification
 
 import com.github.speky.core.ClassRef
 import com.github.speky.core.Show
+import kotlin.jvm.Throws
 
 /**
  * Name alias for a [Specification]. two different [Alias] could be combined together.
@@ -11,16 +12,18 @@ import com.github.speky.core.Show
  */
 sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
 
-  fun flatten(): List<Single<*>> {
-    val result = mutableListOf<Single<*>>()
-
-    when (this) {
-      is Single            -> result += this
-      is Multiply<*, *, *> -> result += this.left.flatten() + this.right.flatten()
-      is JustClassRef      -> TODO()
+  /**
+   * Converts [Alias] to [List] of [Single].
+   *
+   * @throws [UnsupportedOperationException] if this alias be [JustClassRef]
+   */
+  @Throws(UnsupportedOperationException::class)
+  fun flatten(): List<Single<*>> = mutableListOf<Single<*>>().apply {
+    when (this@Alias) {
+      is Single            -> this += this@Alias
+      is Multiply<*, *, *> -> this += this@Alias.left.flatten() + this@Alias.right.flatten()
+      is JustClassRef      -> throw UnsupportedOperationException("JustClassRef could not bew Single")
     }
-
-    return result
   }
 
   companion object {
@@ -51,7 +54,7 @@ sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
     /**
      * Factory-method to create new [JustClassRef] instance.
      */
-    inline fun <reified T> justClass(): JustClassRef<T> = JustClassRef(ClassRef.of())
+    inline fun <reified T> justClassRef(): JustClassRef<T> = JustClassRef(ClassRef.of())
   }
 
   /**

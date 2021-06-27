@@ -1,11 +1,54 @@
 package com.github.speky.core.specification
 
 import com.github.speky.core.ClassRef
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 
 internal class AliasTest : FunSpec({
+  test("flatten Alias.Single should return same Alias.Single") {
+    val al = Alias.of<Int>("nam")
+
+    al.flatten() shouldHaveSize 1
+    al.flatten() shouldContain al
+  }
+
+  test("flatten Alias.JustClassRef should throw") {
+    val e = shouldThrow<UnsupportedOperationException> {
+      Alias.justClassRef<Int>().flatten()
+    }
+
+    e.message shouldNotBe null
+    e.message!! shouldBe "JustClassRef could not bew Single"
+  }
+
+  test("flatten Alias.Multiply should return at least two") {
+    val al = Alias.of<Int, Int, Int>(Alias.of("n"), Alias.of("m"))
+
+    al.flatten() shouldHaveSize 2
+    al.flatten() shouldContain Alias.of<Int>("n")
+    al.flatten() shouldContain Alias.of<Int>("m")
+  }
+
+  test("flatten Alias.Multiply should return three") {
+    val al = Alias.of<Int, Int, Int>(
+      Alias.of<Int, Int, Int>(
+        Alias.of("n"),
+        Alias.of("m")
+      ),
+      Alias.of("b")
+    )
+
+    al.flatten() shouldHaveSize 3
+    al.flatten() shouldContain Alias.of<Int>("n")
+    al.flatten() shouldContain Alias.of<Int>("m")
+    al.flatten() shouldContain Alias.of<Int>("b")
+  }
+
   test("Alias.of(String) should return Alias.Single") {
     val al = Alias.of<Int>("nam")
 
@@ -44,7 +87,7 @@ internal class AliasTest : FunSpec({
   }
 
   test("Alias.justClass() should return Alias.JustClassRef") {
-    val al = Alias.justClass<Int>()
+    val al = Alias.justClassRef<Int>()
 
     al.shouldBeInstanceOf<Alias.JustClassRef<Int>>()
     (al.classRef == ClassRef.of<Int>()) shouldBe true
@@ -76,7 +119,7 @@ internal class AliasTest : FunSpec({
   }
 
   test("Alias.show for Alias.JustClassRef") {
-    val al = Alias.justClass<Int>()
+    val al = Alias.justClassRef<Int>()
 
     with(Alias.show) {
       al.show() shouldBe al.classRef.name.lowercase()
@@ -132,7 +175,7 @@ internal class AliasTest : FunSpec({
   }
 
   test("Alias.JustClassRef equals and hashCode") {
-    val al = Alias.justClass<Int>()
+    val al = Alias.justClassRef<Int>()
 
     al.shouldBeInstanceOf<Alias.JustClassRef<Int>>()
     (al == al) shouldBe true
@@ -140,10 +183,10 @@ internal class AliasTest : FunSpec({
 
     (al == ClassRef.of<Int>()) shouldBe false
 
-    (al == Alias.justClass<Int>()) shouldBe true
-    (al.hashCode() == Alias.justClass<Int>().hashCode()) shouldBe true
+    (al == Alias.justClassRef<Int>()) shouldBe true
+    (al.hashCode() == Alias.justClassRef<Int>().hashCode()) shouldBe true
 
-    (al == Alias.justClass<Long>()) shouldBe false
-    (al.hashCode() == Alias.justClass<Long>().hashCode()) shouldBe false
+    (al == Alias.justClassRef<Long>()) shouldBe false
+    (al.hashCode() == Alias.justClassRef<Long>().hashCode()) shouldBe false
   }
 })

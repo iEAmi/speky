@@ -25,13 +25,13 @@ sealed class Sink<T> private constructor(
      * Factory-method to create new [Insert] instance.
      */
     inline fun <reified T> insert(values: List<Value<T, *>>): Insert<T> =
-      Insert(Alias.justClass(), values)
+      Insert(Alias.justClassRef(), values)
 
     /**
      * Factory-method to create new [Update] instance.
      */
     inline fun <reified T> update(values: Set<Value<T, *>>): Update<T> =
-      Update(Alias.justClass(), values)
+      Update(Alias.justClassRef(), values)
   }
 
   /**
