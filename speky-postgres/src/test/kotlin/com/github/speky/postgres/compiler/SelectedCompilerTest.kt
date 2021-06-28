@@ -1,0 +1,52 @@
+package com.github.speky.postgres.compiler
+
+import com.github.speky.core.Lens
+import com.github.speky.core.PropertyRef
+import com.github.speky.core.specification.Alias
+import com.github.speky.core.specification.Specification
+import com.github.speky.core.table.*
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+
+internal class SelectedCompilerTest : FunSpec({
+  test("compiling Selected.All") {
+    val selected = Specification.from<Human>("hh")
+      .select()
+    val compiler = SelectedCompiler(PgSpecificationCompiler(MockTableResolver, MockColumnResolver))
+
+
+    with(compiler) {
+      selected.compile().toString() shouldBe "SELECT *\nFROM human AS hh"
+    }
+  }
+
+  test("compiling Selected.Some") {
+    val selected = Specification.from<Human>("hh")
+      .select(
+        Lens.on<Human, Long>("id"),
+        Lens.on<Human, Long>("name"),
+        Lens.on<Human, Long>("family"),
+      )
+    val compiler = SelectedCompiler(PgSpecificationCompiler(MockTableResolver, MockColumnResolver))
+
+
+    with(compiler) {
+      selected.compile().toString() shouldBe "SELECT hh.id, hh.name, hh.family\nFROM human AS hh"
+    }
+  }
+}) {
+  private class Human(val id: Long, val name: String, val family: String)
+  private object MockTableResolver : TableResolver {
+    override fun resolveTableName(alias: Alias<*>): Table<*> =
+      object : Table<Any>(alias.classRef.name.lowercase()) {
+        override fun constructorRef(): ConstructorRef<Any> {
+          TODO("Not yet implemented")
+        }
+      }
+  }
+
+  private object MockColumnResolver : ColumnResolver {
+    override fun resolveColumnName(prop: PropertyRef<*>): Column<*, *, *> =
+      Column(prop.name, Lens.on<Int, Long>("id"), SqlType.Bigint, SqlValue.Bigint.transformer)
+  }
+}

@@ -2,7 +2,5 @@ rootProject.name = "speky"
 
 include 'speky-core'
 include 'speky-extension'
-include 'speky-table'
-include 'speky-compiler'
-include 'speky-compiler-pg'
+include 'speky-postgres'
 

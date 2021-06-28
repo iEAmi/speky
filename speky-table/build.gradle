@@ -1,6 +1,0 @@
-dependencies {
-  compileOnly(project(":speky-core"))
-  testImplementation(project(":speky-core"))
-  testImplementation('com.google.code.gson:gson:2.8.7')
-  testImplementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-}
