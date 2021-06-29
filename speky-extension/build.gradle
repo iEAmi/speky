@@ -1,5 +1,7 @@
 dependencies {
-  implementation(project(":speky-core"))
+  compileOnly(project(":speky-core"))
+
+  testImplementation(project(":speky-core"))
 }
 
 compileKotlin {
