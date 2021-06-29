@@ -13,10 +13,19 @@ internal class SelectedCompiler(private val compiler: PgSpecificationCompiler) :
   WithPgTerms, ColumnResolver by compiler {
   fun Selected<*>.compile(): PgTerm = when (this) {
     is Selected.All  -> select() + all() + with(compiler) { source.compile() }
-    is Selected.Some -> select() + columnNames() + with(compiler) { source.compile() }
+    is Selected.Some -> select() + findColumnNames() + with(compiler) { source.compile() }
   }
 
-  private fun Selected.Some<*>.columnNames(): String = lenses.joinToString(prefix = " ") {
-    with(it.propertyRef) { "${alias.find(this).value}.${columnName()}" }
+  private fun Selected.Some<*>.findColumnNames(): String {
+    return lenses.joinToString(prefix = " ") {
+      with(it.propertyRef) {
+        val aliasValue = alias.find(this).value
+        val names = columnsName()
+
+        if (names.size == 1) return@with "$aliasValue.${names.first()}"
+
+        return@with names.joinToString { name -> "$aliasValue.$name" }
+      }
+    }
   }
 }

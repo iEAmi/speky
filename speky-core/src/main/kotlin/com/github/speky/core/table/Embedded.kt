@@ -20,6 +20,11 @@ abstract class Embedded<E, T>(
   internal val lens: Lens<E, T>,
   internal val classRef: ClassRef<E>,
 ) : ColumnDefinition<E>(), Constructible<E> {
+
+  override fun columns(): Set<Column<E, *, *>> {
+    return super.columns().map { it.copy(name = columnPrefix + it.name) }.toSet()
+  }
+
   companion object {
     /**
      * [Show] instance for [Embedded].

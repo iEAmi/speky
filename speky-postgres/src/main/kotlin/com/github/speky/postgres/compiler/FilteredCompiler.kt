@@ -21,7 +21,7 @@ internal class FilteredCompiler(private val compiler: PgSpecificationCompiler) :
 
   private fun Filter<*, *>.compile(alias: Alias<*>): PgTerm {
     val aliasStr = PgTerm(alias.find(lens.propertyRef).value)
-    val propName = lens.propertyRef.columnName()
+    val propName = lens.propertyRef.columnsName().first()
     val firstPart = aliasStr + dot() + propName
 
     return when (this) {

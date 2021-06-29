@@ -22,9 +22,10 @@ internal class OrderedCompiler(private val compiler: PgSpecificationCompiler) :
   private fun Order<*, *>.compile(alias: Alias<*>): PgTerm =
     when (this) {
       is Ascending  ->
-        PgTerm(alias.find(lens.propertyRef).value) + dot() + lens.propertyRef.columnName()
+        PgTerm(alias.find(lens.propertyRef).value) + dot() + lens.propertyRef.columnsName().first()
 
       is Descending ->
-        PgTerm(alias.find(lens.propertyRef).value) + dot() + lens.propertyRef.columnName() + desc()
+        PgTerm(alias.find(lens.propertyRef).value) + dot() +
+            lens.propertyRef.columnsName().first() + desc()
     }
 }

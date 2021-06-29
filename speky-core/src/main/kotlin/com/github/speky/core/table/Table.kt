@@ -18,9 +18,21 @@ abstract class Table<T>(val tableName: String) : ColumnDefinition<T>(), Construc
   fun <E, EE : Embedded<E, T>> embedded(embedded: EE): EE =
     embedded.apply { registerEmbedded(this) }
 
-  override fun resolveColumnName(prop: PropertyRef<*>): Column<*, *, *>? =
-    super.resolveColumnName(prop)
-      ?: embeds.singleOrNull { it.resolveColumnName(prop) != null }?.resolveColumnName(prop)
+  override fun resolveColumns(prop: PropertyRef<*>): List<Column<*, *, *>> {
+    val column = super.resolveColumns(prop)
+      .ifEmpty { embeds.singleOrNull { it.resolveColumns(prop).any() }?.resolveColumns(prop) }
+
+    if (column == null) {
+      // search in embeds
+      val embed = embeds.singleOrNull {
+        it.classRef == prop.classRef && it.lens.propertyRef.name == prop.name
+      } ?: return emptyList()
+
+      return embed.columns().toList()
+    }
+
+    return column
+  }
 
   @PublishedApi
   internal fun registerEmbedded(embedded: Embedded<*, T>) {

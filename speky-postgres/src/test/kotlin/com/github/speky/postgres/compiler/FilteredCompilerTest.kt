@@ -5,7 +5,13 @@ import com.github.speky.core.PropertyRef
 import com.github.speky.core.specification.Alias
 import com.github.speky.core.specification.Filter
 import com.github.speky.core.specification.Specification
-import com.github.speky.core.table.*
+import com.github.speky.core.table.Column
+import com.github.speky.core.table.ColumnResolver
+import com.github.speky.core.table.ConstructorRef
+import com.github.speky.core.table.SqlType
+import com.github.speky.core.table.SqlValue
+import com.github.speky.core.table.Table
+import com.github.speky.core.table.TableResolver
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
@@ -131,7 +137,14 @@ internal class FilteredCompilerTest : FunSpec({
   }
 
   private object MockColumnResolver : ColumnResolver {
-    override fun resolveColumnName(prop: PropertyRef<*>): Column<*, *, *> =
-      Column(prop.name, Lens.on<Int, Long>("id"), SqlType.Bigint, SqlValue.Bigint.transformer)
+    override fun resolveColumns(prop: PropertyRef<*>): List<Column<*, *, *>> =
+      listOf(
+        Column(
+          prop.name,
+          Lens.on<Int, Long>("id"),
+          SqlType.Bigint,
+          SqlValue.Bigint.transformer
+        )
+      )
   }
 }

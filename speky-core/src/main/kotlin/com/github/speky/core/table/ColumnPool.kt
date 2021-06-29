@@ -18,6 +18,11 @@ internal open class ColumnPool<T> @PublishedApi internal constructor() : ColumnR
     columns.add(column)
   }
 
-  override fun resolveColumnName(prop: PropertyRef<*>): Column<*, *, *>? =
-    columns.singleOrNull { it.lens.propertyRef == prop }
+  internal open fun columns(): Set<Column<T, *, *>> = columns
+
+  override fun resolveColumns(prop: PropertyRef<*>): List<Column<*, *, *>> {
+    val column = columns.singleOrNull { it.lens.propertyRef == prop }
+
+    return if (column == null) emptyList() else listOf(column)
+  }
 }

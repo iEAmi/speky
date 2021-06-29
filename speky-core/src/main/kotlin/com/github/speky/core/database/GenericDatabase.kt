@@ -25,8 +25,11 @@ abstract class GenericDatabase<R, V> : TableResolver, ColumnResolver {
 
   override fun resolveTableName(alias: Alias<*>): Table<*>? = tables[alias.classRef]
 
-  override fun resolveColumnName(prop: PropertyRef<*>): Column<*, *, *>? =
-    tables.values.singleOrNull { it.resolveColumnName(prop) != null }?.resolveColumnName(prop)
+  override fun resolveColumns(prop: PropertyRef<*>): List<Column<*, *, *>> {
+    val table = tables.values.singleOrNull { it.resolveColumns(prop).any() } ?: return emptyList()
+
+    return table.resolveColumns(prop)
+  }
 
   /**
    * Compiles [spec] to [R].

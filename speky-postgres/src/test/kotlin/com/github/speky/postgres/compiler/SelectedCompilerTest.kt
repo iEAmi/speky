@@ -46,7 +46,7 @@ internal class SelectedCompilerTest : FunSpec({
   }
 
   private object MockColumnResolver : ColumnResolver {
-    override fun resolveColumnName(prop: PropertyRef<*>): Column<*, *, *> =
-      Column(prop.name, Lens.on<Int, Long>("id"), SqlType.Bigint, SqlValue.Bigint.transformer)
+    override fun resolveColumns(prop: PropertyRef<*>): List<Column<*, *, *>> =
+      listOf(Column(prop.name, Lens.on<Int, Long>("id"), SqlType.Bigint, SqlValue.Bigint.transformer))
   }
 }
