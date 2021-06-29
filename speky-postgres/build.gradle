@@ -1,4 +1,6 @@
 dependencies {
-  implementation(project(":speky-core"))
-  implementation("org.postgresql:postgresql:42.2.22")
+  compileOnly(project(":speky-core"))
+  compileOnly("org.postgresql:postgresql:42.2.22")
+
+  testImplementation(project(":speky-core"))
 }
