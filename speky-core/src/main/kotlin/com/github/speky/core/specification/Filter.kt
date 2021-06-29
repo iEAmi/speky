@@ -72,6 +72,14 @@ sealed class Filter<T, F> private constructor(
     fun <T> like(lens: Lens<String, T>, value: String): Like<T> = Like(lens, value)
 
     /**
+     * Factory-method to create [Like] instance.
+     */
+    @Suppress("UNCHECKED_CAST")
+    @JvmName("likeWithLens2")
+    fun <T1, T2> like(lens: Lens<String, Lens<T2, T1>>, value: String): Like<T1> =
+      Like(lens as Lens<String, T1>, value)
+
+    /**
      * Factory-method to create [Contains] instance.
      */
     fun <T> contains(lens: Lens<String, T>, value: String): Contains<T> = Contains(lens, value)

@@ -20,7 +20,10 @@ internal class SourceTest : FunSpec({
 
     val select = spec.select()
 
+    spec.alias.value shouldBe "0"
+    spec.alias shouldBe Alias.of<Int>("0")
     select.shouldBeInstanceOf<Selected.All<Int>>()
+    select.alias.shouldBeInstanceOf<Alias.Single<Int>>()
     (select.alias == Alias.of<Int>("0")) shouldBe true
     (select.classRef == ClassRef.of<Int>()) shouldBe true
     (select.delegate == select.source) shouldBe true

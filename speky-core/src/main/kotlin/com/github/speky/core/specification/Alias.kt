@@ -2,6 +2,7 @@ package com.github.speky.core.specification
 
 import com.github.speky.core.ClassRef
 import com.github.speky.core.Show
+import kotlin.jvm.Throws
 
 /**
  * Name alias for a [Specification]. two different [Alias] could be combined together.
@@ -11,6 +12,21 @@ import com.github.speky.core.Show
  */
 sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
 
+  /**
+   * Converts [Alias] to [List] of [Single].
+   *
+   * @throws [UnsupportedOperationException] if this alias be [JustClassRef]
+   */
+  @Throws(UnsupportedOperationException::class)
+  fun flatten(): List<Single<*>> = mutableListOf<Single<*>>().apply {
+    when (this@Alias) {
+      is Single            -> this += this@Alias
+      is Multiply<*, *, *> -> this += this@Alias.left.flatten() + this@Alias.right.flatten()
+      is JustClassRef      ->
+        throw UnsupportedOperationException("JustClassRef could not be Single")
+    }
+  }
+
   companion object {
     /**
      * [Show] instance for [Alias].
@@ -18,6 +34,7 @@ sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
     val show: Show<Alias<*>> = object : Show<Alias<*>> {
       override fun Alias<*>.show(): String = when (this) {
         is Single            -> "${classRef.name} as $value"
+        is JustClassRef      -> classRef.name.lowercase()
         is Multiply<*, *, *> -> "${left.show()} & ${right.show()}"
       }
     }
@@ -34,6 +51,11 @@ sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
       left: Alias<T>,
       right: Alias<R>
     ): Multiply<T, R, TR> = Multiply(ClassRef.of(), left, right)
+
+    /**
+     * Factory-method to create new [JustClassRef] instance.
+     */
+    inline fun <reified T> justClassRef(): JustClassRef<T> = JustClassRef(ClassRef.of())
   }
 
   /**
@@ -84,5 +106,21 @@ sealed class Alias<T> private constructor(val classRef: ClassRef<T>) {
       result = 31 * result + right.hashCode()
       return result
     }
+  }
+
+  /**
+   * An [Alias] that just hold [ClassRef] to [T].
+   */
+  class JustClassRef<T>(clsRef: ClassRef<T>) : Alias<T>(clsRef) {
+    override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (other !is JustClassRef<*>) return false
+
+      if (classRef != other.classRef) return false
+
+      return true
+    }
+
+    override fun hashCode(): Int = classRef.hashCode()
   }
 }

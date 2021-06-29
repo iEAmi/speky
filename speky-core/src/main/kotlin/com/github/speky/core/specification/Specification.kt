@@ -22,5 +22,17 @@ sealed class Specification<T> internal constructor(open val alias: Alias<T>) {
      * Factory-method to create [Specification] instance.
      */
     inline fun <reified T> from(alias: String): Single<T> = Single(Alias.of(alias))
+
+    /**
+     * Factory-method to create [Sink] instance.
+     */
+    inline fun <reified T> insertOn(vararg values: Value<T, *>): Sink.Insert<T> =
+      if (values.isNotEmpty()) Sink.insert(values.asList()) else Sink.insert(emptyList())
+
+    /**
+     * Factory-method to create [Sink] instance.
+     */
+    inline fun <reified T> updateOn(vararg values: Value<T, *>): Sink.Update<T> =
+      if (values.isNotEmpty()) Sink.update(values.toSet()) else Sink.update(emptySet())
   }
 }
