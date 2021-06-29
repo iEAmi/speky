@@ -21,7 +21,7 @@ internal class ColumnPoolTest : FunSpec({
     val name = varchar("name", Lens.on("name"))
     val nameAgain = varchar("name", Lens.on("name"))
     override fun constructorRef(): ConstructorRef<Note> {
-      TODO("Not yet implemented")
+      throw Exception()
     }
   }
 }

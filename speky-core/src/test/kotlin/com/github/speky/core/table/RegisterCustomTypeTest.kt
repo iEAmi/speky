@@ -31,11 +31,12 @@ internal class RegisterCustomTypeTest : FunSpec({
     val transformer = MobileTransformer(Gson())
     val mobile = Mobile(98, "990")
 
-    transformer.toSqlValue(mobile) shouldBe SqlValue.Varchar("{\"countryCode\":98,\"value\":\"990\"}")
-    transformer.fromSqlValue(SqlValue.Varchar("{\"countryCode\":98,\"value\":\"990\"}")) shouldBe Mobile(
-      98,
-      "990"
-    )
+    transformer.toSqlValue(mobile) shouldBe
+        SqlValue.Varchar("{\"countryCode\":98,\"value\":\"990\"}")
+
+    transformer.fromSqlValue(
+      SqlValue.Varchar("{\"countryCode\":98,\"value\":\"990\"}")
+    ) shouldBe Mobile(98, "990")
   }
 }) {
   private data class Mobile(val countryCode: Int, val value: String)

@@ -58,14 +58,14 @@ internal class SourceCompilerTest : FunSpec({
     }
   }
 }) {
-  private class Human(val id: Long)
-  private class City(val id: Long)
-  private class HumanCity(val id: Long)
+  private data class Human(val id: Long)
+  private data class City(val id: Long)
+  private data class HumanCity(val id: Long)
   private object MockTableResolver : TableResolver {
     override fun resolveTableName(alias: Alias<*>): Table<*> =
       object : Table<Any>(alias.classRef.name.lowercase()) {
         override fun constructorRef(): ConstructorRef<Any> {
-          TODO("Not yet implemented")
+          throw Exception()
         }
       }
   }

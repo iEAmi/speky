@@ -32,6 +32,6 @@ internal class PgTermTest : FunSpec({
   test("operator plus Alias should be valid") {
     val term = PgTerm("Name")
 
-    term + (Alias.of<Int>("i") as Alias<Int>) shouldBe PgTerm("Namei")
+    term + Alias.of<Int>("i") as Alias<Int> shouldBe PgTerm("Namei")
   }
 })

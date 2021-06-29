@@ -5,10 +5,12 @@
 [![GitHub License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 [![ktlint](https://img.shields.io/badge/code%20style-%E2%9D%A4-FF4081.svg)](https://ktlint.github.io/)
 
-
 # Speky
+
 Simple, type-safe and fast specification dsl for Kotlin.
 
 ---
+
 ### Why Speky
+
 * I don`t know yet

@@ -4,7 +4,12 @@ import com.github.speky.core.specification.Alias
 import com.github.speky.core.specification.Sink
 import com.github.speky.core.specification.Sized
 import com.github.speky.core.specification.Value
-import com.github.speky.extension.*
+import com.github.speky.extension.desc
+import com.github.speky.extension.from
+import com.github.speky.extension.gte
+import com.github.speky.extension.insertOn
+import com.github.speky.extension.on
+import com.github.speky.extension.setTo
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainAll
