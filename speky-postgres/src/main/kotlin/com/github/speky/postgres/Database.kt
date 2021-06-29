@@ -2,7 +2,9 @@ package com.github.speky.postgres
 
 import com.github.speky.core.database.GenericDatabase
 import com.github.speky.core.specification.Specification
+import com.github.speky.core.table.Table
 import com.github.speky.postgres.compiler.PgSpecificationCompiler
+import com.github.speky.postgres.executor.ExecutionResultFromResultSet
 import com.github.speky.postgres.executor.PgSpecificationExecutor
 import java.sql.ResultSet
 
@@ -20,11 +22,19 @@ abstract class Database : GenericDatabase<String, ResultSet>() {
   override fun <T> compile(spec: Specification<T>): String = with(compiler) { spec.compile() }
   override fun <T> execute(spec: Specification<T>): ResultSet = with(executor) { spec.execute() }
 
-  override fun <T> Specification<T>.single(): T? = null
+  @Suppress("UNCHECKED_CAST")
+  override fun <T> Specification<T>.list(): List<T> {
+    val resultSet = execute(this)
 
-  override fun <T> Specification<T>.first(): T? = null
+    val list = mutableListOf<T>()
+    while (resultSet.next()) {
+      val constructorRef = (resolveTable(alias)!! as Table<T>).constructorRef()
 
-  override fun <T> Specification<T>.list(): List<T> = emptyList()
+      list += constructorRef.invoke(ExecutionResultFromResultSet(resultSet))
+    }
+
+    return list
+  }
 
   /**
    * Starting-point to register tables.

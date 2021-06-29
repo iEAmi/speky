@@ -1,6 +1,7 @@
 package com.github.speky.core.table
 
 import com.github.speky.core.Show
+import com.github.speky.core.specification.executor.ExecutionResult
 
 /**
  * A reference to constructor of an object.
@@ -13,7 +14,7 @@ import com.github.speky.core.Show
 class ConstructorRef<T>(
   private val functionRef: FunctionRef<T>,
   private vararg val parameters: Parameter<T, *>
-) : (Table<T>) -> T {
+) : (ExecutionResult) -> T {
 
   /**
    * Validating parameters.
@@ -23,9 +24,21 @@ class ConstructorRef<T>(
   }
 
   /**
-   * Not implemented yet
+   * Convert [executionResult] to [T]. converts column to corresponding value then transforms.
    */
-  override fun invoke(table: Table<T>): T = functionRef.invoke()
+  override fun invoke(executionResult: ExecutionResult): T {
+    val paramValues = parameters.map {
+      when (it) {
+        is Parameter.EmbeddedParam        -> it.embedded.constructorRef().invoke(executionResult)
+        is Parameter.NormalParam<*, *, *> ->
+          it.column.transformer.fromSqlValue0(
+            SqlValueRetriever(it.column, executionResult).retrieve()
+          )
+      }
+    }
+
+    return functionRef.invoke(paramValues)
+  }
 
   /**
    * [ConstructorRef] parameter.
@@ -68,5 +81,38 @@ class ConstructorRef<T>(
      * @property embedded [Embedded] instance
      */
     data class EmbeddedParam<T, R>(val embedded: Embedded<R, T>) : Parameter<T, R>()
+  }
+
+  private class SqlValueRetriever(
+    private val column: Column<*, *, *>,
+    private val executionResult: ExecutionResult
+  ) {
+
+    @Suppress("ComplexMethod")
+    fun retrieve(): SqlValue = when (column.sqlType) {
+      SqlType.Array                 -> SqlValue.Array(executionResult.getArray(column.name))
+      SqlType.Bigint                -> SqlValue.Bigint(executionResult.getBigint(column.name))
+      SqlType.Boolean               -> SqlValue.Boolean(executionResult.getBoolean(column.name))
+      SqlType.Decimal               -> SqlValue.Decimal(executionResult.getDecimal(column.name))
+      SqlType.Double                -> SqlValue.Double(executionResult.getDouble(column.name))
+      SqlType.Float                 -> SqlValue.Float(executionResult.getFloat(column.name))
+      SqlType.Integer               -> SqlValue.Int(executionResult.getInteger(column.name))
+      SqlType.LongVarchar           -> SqlValue.Text(executionResult.getLongVarchar(column.name))
+      SqlType.Varchar               -> SqlValue.Varchar(executionResult.getVarchar(column.name))
+      SqlType.Other                 -> SqlValue.UUID(executionResult.getOther(column.name))
+      SqlType.Real                  -> SqlValue.Real(executionResult.getReal(column.name))
+      SqlType.SmallInt              -> SqlValue.Short(executionResult.getSmallInt(column.name))
+      SqlType.Date                  -> SqlValue.Date(executionResult.getDate(column.name))
+      SqlType.Time                  -> SqlValue.Time(executionResult.getTime(column.name))
+      SqlType.TimeWithTimeZone      ->
+        SqlValue.Timez(executionResult.getTimeWithTimeZone(column.name))
+      SqlType.Timestamp             ->
+        SqlValue.Timestamp(executionResult.getTimestamp(column.name))
+      SqlType.TimestampWithTimeZone ->
+        SqlValue.Timestampz(executionResult.getTimestampWithTimeZone(column.name))
+      SqlType.Numeric               -> SqlValue.Numeric(executionResult.getNumeric(column.name))
+      SqlType.Blob                  -> SqlValue.Blob(executionResult.getBlob(column.name))
+      SqlType.Binary                -> SqlValue.Binary(executionResult.getBinary(column.name))
+    }
   }
 }

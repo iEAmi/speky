@@ -42,16 +42,6 @@ abstract class GenericDatabase<R, V> : TableResolver, ColumnResolver {
   abstract fun <T> execute(spec: Specification<T>): V
 
   /**
-   * Compiles, Executes [Specification] and return single result.
-   */
-  abstract fun <T> Specification<T>.single(): T?
-
-  /**
-   * Compiles, Executes [Specification] and return first result.
-   */
-  abstract fun <T> Specification<T>.first(): T?
-
-  /**
    * Compiles, Executes [Specification] and return list result.
    */
   abstract fun <T> Specification<T>.list(): List<T>
