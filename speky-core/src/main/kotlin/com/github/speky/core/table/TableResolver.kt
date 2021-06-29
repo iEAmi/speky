@@ -10,15 +10,15 @@ interface TableResolver {
   /**
    * Converts [alias] to corresponding table name.
    */
-  fun resolveTableName(alias: Alias<*>): Table<*>?
+  fun resolveTable(alias: Alias<*>): Table<*>?
 
   /**
    * Extension-function for [Alias].
    *
    * @receiver [Alias]
    *
-   * @see [resolveTableName]
+   * @see [resolveTable]
    */
   fun Alias<*>.tableName(): String =
-    resolveTableName(this)?.tableName ?: throw NoSuchElementException()
+    resolveTable(this)?.tableName ?: throw NoSuchElementException()
 }

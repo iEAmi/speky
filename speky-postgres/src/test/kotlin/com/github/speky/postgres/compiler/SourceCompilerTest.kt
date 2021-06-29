@@ -62,7 +62,7 @@ internal class SourceCompilerTest : FunSpec({
   private data class City(val id: Long)
   private data class HumanCity(val id: Long)
   private object MockTableResolver : TableResolver {
-    override fun resolveTableName(alias: Alias<*>): Table<*> =
+    override fun resolveTable(alias: Alias<*>): Table<*> =
       object : Table<Any>(alias.classRef.name.lowercase()) {
         override fun constructorRef(): ConstructorRef<Any> {
           throw Exception()

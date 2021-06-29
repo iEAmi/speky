@@ -22,7 +22,7 @@ abstract class GenericDatabase<R, V> : TableResolver, ColumnResolver {
     tables[classRef] = table
   }
 
-  override fun resolveTableName(alias: Alias<*>): Table<*>? = tables[alias.classRef]
+  override fun resolveTable(alias: Alias<*>): Table<*>? = tables[alias.classRef]
 
   override fun resolveColumns(prop: PropertyRef<*>): ColumnResolver.ResolveResult {
     val table = tables.values.singleOrNull { it.resolveColumns(prop).isFound() }

@@ -40,7 +40,7 @@ internal class OrderedCompilerTest : FunSpec({
 }) {
   private data class Human(val id: Long, val name: String, val family: String)
   private object MockTableResolver : TableResolver {
-    override fun resolveTableName(alias: Alias<*>): Table<*> =
+    override fun resolveTable(alias: Alias<*>): Table<*> =
       object : Table<Any>(alias.classRef.name.lowercase()) {
         override fun constructorRef(): ConstructorRef<Any> {
           throw Exception()
