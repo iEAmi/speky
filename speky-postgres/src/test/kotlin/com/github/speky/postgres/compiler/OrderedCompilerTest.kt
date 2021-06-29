@@ -49,8 +49,8 @@ internal class OrderedCompilerTest : FunSpec({
   }
 
   private object MockColumnResolver : ColumnResolver {
-    override fun resolveColumns(prop: PropertyRef<*>): List<Column<*, *, *>> =
-      listOf(
+    override fun resolveColumns(prop: PropertyRef<*>): ColumnResolver.ResolveResult =
+      ColumnResolver.column(
         Column(
           prop.name,
           Lens.on<Int, Long>("id"),

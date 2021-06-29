@@ -4,7 +4,6 @@ import com.github.speky.core.ClassRef
 import com.github.speky.core.PropertyRef
 import com.github.speky.core.specification.Alias
 import com.github.speky.core.specification.Specification
-import com.github.speky.core.table.Column
 import com.github.speky.core.table.ColumnResolver
 import com.github.speky.core.table.Table
 import com.github.speky.core.table.TableResolver
@@ -25,8 +24,9 @@ abstract class GenericDatabase<R, V> : TableResolver, ColumnResolver {
 
   override fun resolveTableName(alias: Alias<*>): Table<*>? = tables[alias.classRef]
 
-  override fun resolveColumns(prop: PropertyRef<*>): List<Column<*, *, *>> {
-    val table = tables.values.singleOrNull { it.resolveColumns(prop).any() } ?: return emptyList()
+  override fun resolveColumns(prop: PropertyRef<*>): ColumnResolver.ResolveResult {
+    val table = tables.values.singleOrNull { it.resolveColumns(prop).isFound() }
+      ?: return ColumnResolver.notfound()
 
     return table.resolveColumns(prop)
   }

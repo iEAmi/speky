@@ -8,8 +8,10 @@ import com.github.speky.core.specification.Specification
 import com.github.speky.core.table.ConstructorRef
 import com.github.speky.core.table.Embedded
 import com.github.speky.core.table.Table
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 
 internal class DatabaseTest : FunSpec({
   test("compile select specification against database") {
@@ -65,11 +67,76 @@ internal class DatabaseTest : FunSpec({
         "SELECT pp.p_id, pp.p_name\nFROM all_persons AS pp\nWHERE pp.p_name LIKE '%spek%'\nORDER BY pp.p_name DESC\nLIMIT 10 OFFSET 0"
   }
 
-  test("compile select embedded specification against database") {
+  test("compile select without column definition should fails") {
+    val table = object : Table<Person>("all_persons") {
+      val id = bigint("p_id", Lens.on("id"))
+      val name = varchar("p_name", Lens.on("name"))
+
+      override fun constructorRef(): ConstructorRef<Person> {
+        TODO("Not yet implemented")
+      }
+    }
+
+    val db = object : Database() {
+      override fun onRegisterTable() {
+        registerTable(table, ClassRef.of())
+      }
+    }
+
     val spec = Specification.from<Person>("pp")
       .select(Lens.on<Person, Long>("id"), Lens.on<Person, Address>("address"))
 
-    MyDatabase.compile(spec) shouldBe "SELECT pp.p_id, pp.address_city, pp.address_province\nFROM all_persons AS pp"
+    val e = shouldThrow<NoSuchElementException> {
+      db.compile(spec)
+    }
+
+    e.message shouldNotBe null
+    e.message!! shouldBe
+        "No column or embedded registered for 'com.github.speky.postgres.DatabaseTest.Person.address'"
+  }
+
+  test("compile select embedded without column definition should fails") {
+    val embedded =
+      object : Embedded<Address, Person>("address_", Lens.on("address"), ClassRef.of()) {
+        override fun constructorRef(): ConstructorRef<Address> {
+          TODO("Not yet implemented")
+        }
+      }
+
+    val table = object : Table<Person>("all_persons") {
+      val id = bigint("p_id", Lens.on("id"))
+      val name = varchar("p_name", Lens.on("name"))
+      val address = embedded(embedded)
+
+      override fun constructorRef(): ConstructorRef<Person> {
+        TODO("Not yet implemented")
+      }
+    }
+
+    val db = object : Database() {
+      override fun onRegisterTable() {
+        registerTable(table, ClassRef.of())
+      }
+    }
+
+    val spec = Specification.from<Person>("pp")
+      .select(Lens.on<Person, Long>("id"), Lens.on<Person, Address>("address"))
+
+    val e = shouldThrow<NoSuchElementException> {
+      db.compile(spec)
+    }
+
+    e.message shouldNotBe null
+    e.message!! shouldBe
+        "Embedded 'Address' was found. but no column registered for this embedded type"
+  }
+
+  test("compile select with embedded") {
+    val spec = Specification.from<Person>("pp")
+      .select(Lens.on<Person, Long>("id"), Lens.on<Person, Address>("address"))
+
+    MyDatabase.compile(spec) shouldBe
+        "SELECT pp.p_id, pp.address_city, pp.address_province\nFROM all_persons AS pp"
   }
 }) {
   private object MyDatabase : Database() {

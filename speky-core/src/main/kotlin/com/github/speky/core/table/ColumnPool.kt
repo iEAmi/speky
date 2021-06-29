@@ -20,9 +20,9 @@ internal open class ColumnPool<T> @PublishedApi internal constructor() : ColumnR
 
   internal open fun columns(): Set<Column<T, *, *>> = columns
 
-  override fun resolveColumns(prop: PropertyRef<*>): List<Column<*, *, *>> {
+  override fun resolveColumns(prop: PropertyRef<*>): ColumnResolver.ResolveResult {
     val column = columns.singleOrNull { it.lens.propertyRef == prop }
 
-    return if (column == null) emptyList() else listOf(column)
+    return if (column == null) ColumnResolver.notfound() else ColumnResolver.column(column)
   }
 }

@@ -18,21 +18,19 @@ abstract class Table<T>(val tableName: String) : ColumnDefinition<T>(), Construc
   fun <E, EE : Embedded<E, T>> embedded(embedded: EE): EE =
     embedded.apply { registerEmbedded(this) }
 
-  override fun resolveColumns(prop: PropertyRef<*>): List<Column<*, *, *>> {
-    val column = super.resolveColumns(prop)
-      .ifEmpty { embeds.singleOrNull { it.resolveColumns(prop).any() }?.resolveColumns(prop) }
+  override fun resolveColumns(prop: PropertyRef<*>): ColumnResolver.ResolveResult =
+    super.resolveColumns(prop)
+      .ifNotfound {
+        embeds.singleOrNull { it.resolveColumns(prop).isFound() }?.resolveColumns(prop)
+          ?: ColumnResolver.notfound()
+      }
+      .ifNotfound {
+        val embed = embeds.singleOrNull {
+          it.classRef == prop.classRef && it.lens.propertyRef.name == prop.name
+        }
 
-    if (column == null) {
-      // search in embeds
-      val embed = embeds.singleOrNull {
-        it.classRef == prop.classRef && it.lens.propertyRef.name == prop.name
-      } ?: return emptyList()
-
-      return embed.columns().toList()
-    }
-
-    return column
-  }
+        if (embed == null) ColumnResolver.notfound() else ColumnResolver.embedded(embed)
+      }
 
   @PublishedApi
   internal fun registerEmbedded(embedded: Embedded<*, T>) {

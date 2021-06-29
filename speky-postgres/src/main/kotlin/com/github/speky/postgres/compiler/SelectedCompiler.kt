@@ -22,9 +22,8 @@ internal class SelectedCompiler(private val compiler: PgSpecificationCompiler) :
         val aliasValue = alias.find(this).value
         val names = columnsName()
 
-        if (names.size == 1) return@with "$aliasValue.${names.first()}"
-
-        return@with names.joinToString { name -> "$aliasValue.$name" }
+        if (names.size == 1) "$aliasValue.${names.first()}"
+        else names.joinToString { name -> "$aliasValue.$name" }
       }
     }
   }
