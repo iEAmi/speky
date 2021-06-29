@@ -52,8 +52,11 @@ internal class DatabaseTest : FunSpec({
       .order(Order.desc(Lens.on<Person, String>("name")))
       .size(10, 0)
 
-    MyDatabase.compile(spec) shouldBe
-        "SELECT pp.p_id, pp.p_name\nFROM all_persons AS pp\nORDER BY pp.p_name DESC\nLIMIT 10 OFFSET 0"
+    MyDatabase.compile(spec)
+      .shouldBe(
+        "SELECT pp.p_id, pp.p_name\nFROM all_persons AS pp" +
+            "\nORDER BY pp.p_name DESC\nLIMIT 10 OFFSET 0"
+      )
   }
 
   test("compile filter specification against database") {
@@ -64,7 +67,8 @@ internal class DatabaseTest : FunSpec({
       .size(10, 0)
 
     MyDatabase.compile(spec) shouldBe
-        "SELECT pp.p_id, pp.p_name\nFROM all_persons AS pp\nWHERE pp.p_name LIKE '%spek%'\nORDER BY pp.p_name DESC\nLIMIT 10 OFFSET 0"
+        "SELECT pp.p_id, pp.p_name\nFROM all_persons AS pp\nWHERE pp.p_name LIKE '%spek%'" +
+        "\nORDER BY pp.p_name DESC\nLIMIT 10 OFFSET 0"
   }
 
   test("compile select without column definition should fails") {
@@ -73,7 +77,7 @@ internal class DatabaseTest : FunSpec({
       val name = varchar("p_name", Lens.on("name"))
 
       override fun constructorRef(): ConstructorRef<Person> {
-        TODO("Not yet implemented")
+        throw Exception()
       }
     }
 
@@ -92,14 +96,15 @@ internal class DatabaseTest : FunSpec({
 
     e.message shouldNotBe null
     e.message!! shouldBe
-        "No column or embedded registered for 'com.github.speky.postgres.DatabaseTest.Person.address'"
+        "No column or embedded registered for " +
+        "'com.github.speky.postgres.DatabaseTest.Person.address'"
   }
 
   test("compile select embedded without column definition should fails") {
     val embedded =
       object : Embedded<Address, Person>("address_", Lens.on("address"), ClassRef.of()) {
         override fun constructorRef(): ConstructorRef<Address> {
-          TODO("Not yet implemented")
+          throw Exception()
         }
       }
 
@@ -109,7 +114,7 @@ internal class DatabaseTest : FunSpec({
       val address = embedded(embedded)
 
       override fun constructorRef(): ConstructorRef<Person> {
-        TODO("Not yet implemented")
+        throw Exception()
       }
     }
 
@@ -145,15 +150,15 @@ internal class DatabaseTest : FunSpec({
     }
   }
 
-  private class Address(val city: String, val province: String)
-  private class Person(val id: Long, val name: String, val address: Address)
+  private data class Address(val city: String, val province: String)
+  private data class Person(val id: Long, val name: String, val address: Address)
   private object Persons : Table<Person>("all_persons") {
     val id = bigint("p_id", Lens.on("id"))
     val name = varchar("p_name", Lens.on("name"))
     val address = embedded(AddressEmbedded(Lens.on("address")))
 
     override fun constructorRef(): ConstructorRef<Person> {
-      TODO("Not yet implemented")
+      throw Exception()
     }
   }
 
@@ -164,7 +169,7 @@ internal class DatabaseTest : FunSpec({
     val province = varchar("province", Lens.on("province"))
 
     override fun constructorRef(): ConstructorRef<Address> {
-      TODO("Not yet implemented")
+      throw Exception()
     }
   }
 }

@@ -12,7 +12,7 @@ internal class ConstructorRefTest : FunSpec({
   test("ConstructorRef.Parameter.show test") {
     val embedded = object : Embedded<Int, String>("name_", Lens.on("length"), ClassRef.of()) {
       override fun constructorRef(): ConstructorRef<Int> {
-        TODO("Not yet implemented")
+        throw Exception()
       }
     }
     val normalParam = ConstructorRef.Parameter.NormalParam(
@@ -34,11 +34,13 @@ internal class ConstructorRefTest : FunSpec({
   test("ConstructorRef.Parameter.of should return value") {
     val embedded = object : Embedded<Int, String>("name_", Lens.on("length"), ClassRef.of()) {
       override fun constructorRef(): ConstructorRef<Int> {
-        TODO("Not yet implemented")
+        throw Exception()
       }
     }
-    val column = Column("name", Lens.on<String, Int>("length"),
-      SqlType.Integer, SqlValue.Int.transformer)
+    val column = Column(
+      "name", Lens.on<String, Int>("length"),
+      SqlType.Integer, SqlValue.Int.transformer
+    )
 
     val normalParam = ConstructorRef.Parameter.NormalParam(column)
     val embeddedParam = ConstructorRef.Parameter.EmbeddedParam(embedded)
@@ -58,8 +60,10 @@ internal class ConstructorRefTest : FunSpec({
       val f = { _: Int -> "" }
       val fRef = FunctionRef(1) { f.invoke(it[0] as Int) }
 
-      val column = Column("name", Lens.on<String, Int>("length"),
-        SqlType.Integer, SqlValue.Int.transformer)
+      val column = Column(
+        "name", Lens.on<String, Int>("length"),
+        SqlType.Integer, SqlValue.Int.transformer
+      )
 
       ConstructorRef(fRef, ConstructorRef.Parameter.of(column), ConstructorRef.Parameter.of(column))
     }

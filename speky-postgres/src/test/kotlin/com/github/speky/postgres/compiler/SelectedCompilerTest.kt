@@ -20,7 +20,6 @@ internal class SelectedCompilerTest : FunSpec({
       .select()
     val compiler = SelectedCompiler(PgSpecificationCompiler(MockTableResolver, MockColumnResolver))
 
-
     with(compiler) {
       selected.compile().toString() shouldBe "SELECT *\nFROM human AS hh"
     }
@@ -41,12 +40,12 @@ internal class SelectedCompilerTest : FunSpec({
     }
   }
 }) {
-  private class Human(val id: Long, val name: String, val family: String)
+  private data class Human(val id: Long, val name: String, val family: String)
   private object MockTableResolver : TableResolver {
     override fun resolveTableName(alias: Alias<*>): Table<*> =
       object : Table<Any>(alias.classRef.name.lowercase()) {
         override fun constructorRef(): ConstructorRef<Any> {
-          TODO("Not yet implemented")
+          throw Exception()
         }
       }
   }

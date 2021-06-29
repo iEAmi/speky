@@ -15,7 +15,7 @@ internal class TableTest : FunSpec({
       val idAgain = bigint("id", Lens.on("id"))
 
       override fun constructorRef(): ConstructorRef<Person> {
-        TODO("Not yet implemented")
+        throw Exception()
       }
     }
 
@@ -32,7 +32,7 @@ internal class TableTest : FunSpec({
       val address = embedded(AddressEmbedded(Lens.on("address")))
 
       override fun constructorRef(): ConstructorRef<Person> {
-        TODO("Not yet implemented")
+        throw Exception()
       }
     }
 
@@ -47,7 +47,7 @@ internal class TableTest : FunSpec({
       val addressAgain = embedded(AddressEmbedded(Lens.on("address")))
 
       override fun constructorRef(): ConstructorRef<Person> {
-        TODO("Not yet implemented")
+        throw Exception()
       }
     }
 

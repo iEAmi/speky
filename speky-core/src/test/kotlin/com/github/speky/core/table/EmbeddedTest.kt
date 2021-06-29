@@ -14,7 +14,7 @@ internal class EmbeddedTest : FunSpec({
       val nameAgain = varchar("name", Lens.on("name"))
 
       override fun constructorRef(): ConstructorRef<City> {
-        TODO()
+        throw Exception()
       }
     }
 

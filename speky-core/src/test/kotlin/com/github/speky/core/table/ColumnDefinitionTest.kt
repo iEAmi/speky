@@ -116,7 +116,7 @@ internal class ColumnDefinitionTest : FunSpec({
   }
 }) {
 
- private data class Mobile(val value: String)
+  private data class Mobile(val value: String)
 
   private class MobileTransformer : ValueTransformer<Mobile, SqlValue.Varchar> {
     override fun toSqlValue(value: Mobile): SqlValue.Varchar = SqlValue.Varchar(value.value)
@@ -148,7 +148,7 @@ internal class ColumnDefinitionTest : FunSpec({
 
     val custom = custom("mobile", Lens.on("mobile"), MobileTransformer())
     override fun constructorRef(): ConstructorRef<Human> {
-      TODO("Not yet implemented")
+      throw Exception()
     }
   }
 }

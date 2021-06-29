@@ -2,7 +2,6 @@ package com.github.speky.core.specification
 
 import com.github.speky.core.ClassRef
 import com.github.speky.core.Show
-import kotlin.jvm.Throws
 
 /**
  * Name alias for a [Specification]. two different [Alias] could be combined together.
