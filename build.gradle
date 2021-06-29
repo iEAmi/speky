@@ -16,21 +16,25 @@ buildscript {
 }
 
 allprojects {
-  group = "com.github.speky"
-  version = "0.3.0"
-}
-
-subprojects { project ->
   apply plugin: "kotlin"
   apply plugin: "java-library"
   apply plugin: "jacoco"
   apply plugin: "io.gitlab.arturbosch.detekt"
 
+  group = "com.github.speky"
+  version = "0.3.0"
+
+  jacoco {
+    toolVersion = jacocoVersion
+  }
+
   repositories {
     mavenLocal()
     mavenCentral()
   }
+}
 
+subprojects { project ->
   dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:${detektVersion}"
@@ -58,39 +62,55 @@ subprojects { project ->
     kotlinOptions.allWarningsAsErrors = false
   }
 
-  jacocoTestReport {
-    dependsOn(tasks.test)
-    reports {
-      csv.required = false
-    }
-  }
-
-  jacocoTestCoverageVerification {
-    violationRules {
-      rule {
-        limit {
-          minimum = 0.9
-        }
-      }
-    }
-  }
-
-  task generateSources(type: Jar) {
-    archiveClassifier = "sources"
-    from sourceSets.main.allSource
-  }
-
-  task generateJavadoc(type: Jar) {
-    archiveClassifier = "javadoc"
-  }
-
-  jacoco {
-    toolVersion = jacocoVersion
-  }
-
   detekt {
     toolVersion = detektVersion
     input = files("src/main/kotlin")
     config = files("${project.rootDir}/detekt.yml")
   }
+}
+
+task jacocoAggregateReport(type: JacocoReport,) {
+  dependsOn(subprojects.test)
+
+  additionalSourceDirs.from = files(subprojects.sourceSets.main.allSource.srcDirs)
+  sourceDirectories.from = files(subprojects.sourceSets.main.allSource.srcDirs)
+  classDirectories.from = files(subprojects.sourceSets.main.output)
+  executionData.from = files(subprojects.jacocoTestReport.executionData)
+
+  reports {
+    html.required = true
+    xml.required = true
+    csv.required = false
+  }
+}
+
+task jacocoAggregateCoverageVerification(type: JacocoCoverageVerification) {
+  dependsOn(tasks.jacocoAggregateReport)
+
+  additionalSourceDirs.from = files(subprojects.sourceSets.main.allSource.srcDirs)
+  sourceDirectories.from = files(subprojects.sourceSets.main.allSource.srcDirs)
+  classDirectories.from = files(subprojects.sourceSets.main.output)
+  executionData.from = files(subprojects.jacocoTestReport.executionData)
+
+  violationRules {
+    rule {
+      limit {
+        minimum = 0.90
+      }
+    }
+  }
+}
+
+task buildCoverage {
+  dependsOn(subprojects.build)
+
+  finalizedBy(tasks.jacocoAggregateReport)
+}
+
+configure([jacocoAggregateReport, jacocoAggregateCoverageVerification]) {
+  group = 'jacoco'
+}
+
+configure(buildCoverage) {
+  group = 'build'
 }
