@@ -20,5 +20,8 @@ interface ColumnResolver {
    * @see [resolveColumnName]
    */
   fun PropertyRef<*>.columnName(): String =
-    resolveColumnName(this)?.name ?: throw NoSuchElementException()
+    resolveColumnName(this)?.name
+      ?: throw NoSuchElementException(
+        "No column defined for property '${this.declaringClassRef.qualifiedName}.${this.name}'"
+      )
 }

@@ -19,5 +19,5 @@ internal open class ColumnPool<T> @PublishedApi internal constructor() : ColumnR
   }
 
   override fun resolveColumnName(prop: PropertyRef<*>): Column<*, *, *>? =
-    columns.single { it.lens.propertyRef == prop }
+    columns.singleOrNull { it.lens.propertyRef == prop }
 }
