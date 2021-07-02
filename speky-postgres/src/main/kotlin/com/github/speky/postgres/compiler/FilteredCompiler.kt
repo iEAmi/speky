@@ -14,7 +14,7 @@ import com.github.speky.postgres.compiler.internal.find
  * Internal compiler for [Filtered].
  */
 internal class FilteredCompiler(private val compiler: PgSpecificationCompiler) : WithPgTerms,
-  ColumnResolver by compiler {
+  ColumnUtil, ColumnResolver by compiler {
 
   fun Filtered<*, *>.compile(): PgTerm =
     PgTerm(with(compiler) { delegate.compile() }) + where() + filter.compile(alias)
@@ -37,6 +37,4 @@ internal class FilteredCompiler(private val compiler: PgSpecificationCompiler) :
       is Filter.EndsWith         -> firstPart + like() + "'%$value'"
     }
   }
-
-  private fun wrapInQuotes(a: Any?): Any? = if (a is String? || a is String) "'$a'" else a
 }

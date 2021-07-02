@@ -29,6 +29,12 @@ internal interface WithPgTerms {
 
   fun comma(postFix: String = " "): PgTerm = COMMA + postFix
   fun dot(): PgTerm = DOT
+  fun lBracket(prefix: String = " ", postFix: String = ""): PgTerm =
+    PgTerm(prefix) + LEFT_BRACKET + postFix
+
+  fun rBracket(prefix: String = "", postFix: String = ""): PgTerm =
+    PgTerm(prefix) + RIGHT_BRACKET + postFix
+
   fun eq(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + EQ + postFix
   fun neq(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + NEQ + postFix
   fun gt(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + GT + postFix
@@ -36,6 +42,10 @@ internal interface WithPgTerms {
   fun lt(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + LT + postFix
   fun lte(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + LTE + postFix
   fun like(prefix: String = " ", postFix: String = " "): PgTerm = PgTerm(prefix) + LIKE + postFix
+
+  fun insertInto(postFix: String = " "): PgTerm = INSERT_INTO + postFix
+  fun values(prefix: String = "\n", postFix: String = ""): PgTerm =
+    PgTerm(prefix) + VALUES + postFix
 
   private companion object {
     private val SELECT: PgTerm = PgTerm("SELECT")
@@ -51,6 +61,8 @@ internal interface WithPgTerms {
     private val ON: PgTerm = PgTerm("ON")
     private val DESC: PgTerm = PgTerm("DESC")
     private val DOT: PgTerm = PgTerm(".")
+    private val LEFT_BRACKET: PgTerm = PgTerm("(")
+    private val RIGHT_BRACKET: PgTerm = PgTerm(")")
     private val COMMA: PgTerm = PgTerm(",")
     private val EQ: PgTerm = PgTerm("=")
     private val NEQ: PgTerm = PgTerm("!=")
@@ -59,5 +71,8 @@ internal interface WithPgTerms {
     private val LT: PgTerm = PgTerm("<")
     private val LTE: PgTerm = PgTerm("<=")
     private val LIKE: PgTerm = PgTerm("LIKE")
+
+    private val INSERT_INTO: PgTerm = PgTerm("INSERT INTO")
+    private val VALUES: PgTerm = PgTerm("VALUES")
   }
 }
