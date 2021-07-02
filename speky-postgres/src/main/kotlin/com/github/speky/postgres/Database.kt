@@ -11,9 +11,13 @@ import java.sql.ResultSet
 /**
  * [GenericDatabase] implementation for postgres.
  */
-abstract class Database : GenericDatabase<String, ResultSet>() {
-  private val compiler: PgSpecificationCompiler by lazy { PgSpecificationCompiler(this, this) }
-  private val executor: PgSpecificationExecutor by lazy { PgSpecificationExecutor(compiler) }
+abstract class Database(private val connectionStr: String) : GenericDatabase<String, ResultSet>() {
+  private val compiler: PgSpecificationCompiler by lazy {
+    PgSpecificationCompiler(this, this)
+  }
+  private val executor: PgSpecificationExecutor by lazy {
+    PgSpecificationExecutor(connectionStr, compiler)
+  }
 
   init {
     this.onRegisterTable()

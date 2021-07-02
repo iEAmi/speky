@@ -81,7 +81,7 @@ internal class DatabaseTest : FunSpec({
       }
     }
 
-    val db = object : Database() {
+    val db = object : Database("") {
       override fun onRegisterTable() {
         registerTable(table, ClassRef.of())
       }
@@ -118,7 +118,7 @@ internal class DatabaseTest : FunSpec({
       }
     }
 
-    val db = object : Database() {
+    val db = object : Database("") {
       override fun onRegisterTable() {
         registerTable(table, ClassRef.of())
       }
@@ -144,7 +144,7 @@ internal class DatabaseTest : FunSpec({
         "SELECT pp.p_id, pp.address_city, pp.address_province\nFROM all_persons AS pp"
   }
 }) {
-  private object MyDatabase : Database() {
+  private object MyDatabase : Database("") {
     override fun onRegisterTable() {
       registerTable(Persons, ClassRef.of())
     }

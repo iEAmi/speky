@@ -11,8 +11,9 @@ import javax.sql.DataSource
  * [SpecificationExecutor] that execute [Specification] against postgres database.
  */
 class PgSpecificationExecutor(
+  private val connectionStr: String,
   private val compiler: SpecificationCompiler<String>,
-  private val dataSource: DataSource = PGSimpleDataSource()
+  private val dataSource: DataSource = PGSimpleDataSource().apply { setURL(connectionStr) }
 ) : SpecificationExecutor<ResultSet> {
 
   override fun Specification<*>.execute(): ResultSet {
