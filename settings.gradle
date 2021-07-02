@@ -4,3 +4,4 @@ include 'speky-core'
 include 'speky-extension'
 include 'speky-postgres'
 
+include 'example'

@@ -1,0 +1,5 @@
+dependencies {
+  implementation(project(":speky-extension"))
+  implementation(project(":speky-postgres"))
+  implementation(project(":speky-core"))
+}
