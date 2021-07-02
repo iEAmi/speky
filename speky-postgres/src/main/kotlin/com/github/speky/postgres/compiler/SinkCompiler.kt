@@ -11,13 +11,41 @@ internal class SinkCompiler(private val compiler: PgSpecificationCompiler) :
 
   fun Sink<*>.compile(): PgTerm = when (this) {
     is Sink.Insert -> insertInto() + alias.tableName() + lBracket() + columns() + rBracket() +
-        values() + lBracket() + cValues() + rBracket()
+        values(postFix = " ") + cValues()
     is Sink.Update -> TODO()
   }
 
   private fun Sink.Insert<*>.columns(): String =
-    values.joinToString { it.lens.propertyRef.name }
+    values.map { it.lens.propertyRef.name }.distinct().joinToString()
 
-  private fun Sink.Insert<*>.cValues(): String =
-    values.map { wrapInQuotes(it.value) }.joinToString()
+  @Suppress("UNCHECKED_CAST")
+  private fun Sink.Insert<*>.cValues(): String {
+    val group = values.groupBy({ it.lens.propertyRef.name }) { it.value }
+    val valueGroup: List<Pair<*, *>> = group.values.fold(emptyList<Any?>()) { acc, list ->
+      if (acc.isEmpty()) list else acc.zip(list)
+    } as List<Pair<*, *>>
+
+    return valueGroup.flatten().joinToString(separator = ",\n") { list ->
+      list.map { wrapInQuotes(it) }.joinToString(
+        prefix = lBracket(prefix = "").toString(),
+        postfix = rBracket().toString()
+      )
+    }
+  }
+
+  private fun List<Pair<*, *>>.flatten(): List<List<*>> = map { it.flatten() }
+
+  private fun Pair<*, *>.flatten(): List<Any?> {
+    val firstList = if (first is Pair<*, *>)
+      (first as Pair<*, *>).flatten()
+    else
+      listOf(first)
+
+    val secondList = if (second is Pair<*, *>)
+      (second as Pair<*, *>).flatten()
+    else
+      listOf(second)
+
+    return firstList + secondList
+  }
 }

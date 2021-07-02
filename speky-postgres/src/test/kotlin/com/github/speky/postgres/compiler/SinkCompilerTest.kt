@@ -31,6 +31,51 @@ internal class SinkCompilerTest : FunSpec({
           "INSERT INTO human (id, name, family)\nVALUES (1, 'Foo', 'Baz')"
     }
   }
+
+  test("compiling batch 2 Sink.Insert") {
+    val sink = Sink.insert<Human>(
+      listOf(
+        Value.of("id", 1L),
+        Value.of("name", "Foo"),
+        Value.of("family", "Baz"),
+
+        Value.of("id", 2L),
+        Value.of("name", "Foo2"),
+        Value.of("family", "Baz2")
+      )
+    )
+    val compiler = SinkCompiler(PgSpecificationCompiler(MockTableResolver, MockColumnResolver))
+
+    with(compiler) {
+      sink.compile().toString() shouldBe
+          "INSERT INTO human (id, name, family)\nVALUES (1, 'Foo', 'Baz'),\n(2, 'Foo2', 'Baz2')"
+    }
+  }
+
+  test("compiling batch 3 Sink.Insert") {
+    val sink = Sink.insert<Human>(
+      listOf(
+        Value.of("id", 1L),
+        Value.of("name", "Foo"),
+        Value.of("family", "Baz"),
+
+        Value.of("id", 2L),
+        Value.of("name", "Foo2"),
+        Value.of("family", "Baz2"),
+
+        Value.of("id", 3L),
+        Value.of("name", "Foo3"),
+        Value.of("family", "Baz3")
+      )
+    )
+    val compiler = SinkCompiler(PgSpecificationCompiler(MockTableResolver, MockColumnResolver))
+
+    with(compiler) {
+      sink.compile().toString() shouldBe
+          "INSERT INTO human (id, name, family)\nVALUES (1, 'Foo', 'Baz'),\n(2, 'Foo2', 'Baz2'),\n" +
+          "(3, 'Foo3', 'Baz3')"
+    }
+  }
 }) {
   private data class Human(val id: Long, val name: String, val family: String)
   private object MockTableResolver : TableResolver {
