@@ -2,4 +2,6 @@ dependencies {
   implementation(project(":speky-extension"))
   implementation(project(":speky-postgres"))
   implementation(project(":speky-core"))
+
+  implementation("org.postgresql:postgresql:42.2.22")
 }
