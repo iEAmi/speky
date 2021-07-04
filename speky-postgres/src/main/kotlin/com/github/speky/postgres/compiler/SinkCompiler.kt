@@ -16,7 +16,8 @@ internal class SinkCompiler(private val compiler: PgSpecificationCompiler) :
   }
 
   private fun Sink.Insert<*>.columns(): String =
-    values.map { it.lens.propertyRef.name }.distinct().joinToString()
+    // in insert only one column is available
+    values.map { it.lens.propertyRef.columnsName().first() }.distinct().joinToString()
 
   @Suppress("UNCHECKED_CAST")
   private fun Sink.Insert<*>.cValues(): String {
