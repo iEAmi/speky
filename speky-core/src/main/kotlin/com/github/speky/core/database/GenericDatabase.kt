@@ -3,6 +3,7 @@ package com.github.speky.core.database
 import com.github.speky.core.ClassRef
 import com.github.speky.core.PropertyRef
 import com.github.speky.core.specification.Alias
+import com.github.speky.core.specification.Sink
 import com.github.speky.core.specification.Specification
 import com.github.speky.core.table.ColumnResolver
 import com.github.speky.core.table.Table
@@ -40,6 +41,11 @@ abstract class GenericDatabase<R, V> : TableResolver, ColumnResolver {
    * Executes [spec] against database and return [V].
    */
   abstract fun <T> execute(spec: Specification<T>): V
+
+  /**
+   * Executes [Sink] against database and return [Boolean].
+   */
+  abstract fun <T> execute(spec: Sink<T>)
 
   /**
    * Compiles, Executes [Specification] and return list result.

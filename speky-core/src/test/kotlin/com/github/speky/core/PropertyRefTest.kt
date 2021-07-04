@@ -7,13 +7,13 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 
 internal class PropertyRefTest : FunSpec({
-  test("invoke() should throw exception with empty name") {
+  test("of() should throw exception with empty name") {
     shouldThrow<IllegalArgumentException> {
       PropertyRef.of<String>("", ClassRef<String>("Name", "a"))
     }
   }
 
-  test("invoke() should throw exception with blank name") {
+  test("of() should throw exception with blank name") {
     shouldThrow<IllegalArgumentException> {
       PropertyRef.of<String>("  ", ClassRef<String>("Name", "a"))
     }
@@ -40,6 +40,8 @@ internal class PropertyRefTest : FunSpec({
       "family",
       ClassRef.of<Any>()
     ).hashCode()
+
+    ref shouldBe PropertyRef("family", ClassRef.of<Int>(), ClassRef.of<Any>())
   }
 
   test("show should return declaringClass.name") {
