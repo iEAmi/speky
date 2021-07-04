@@ -2,12 +2,14 @@ package com.github.speky.postgres.compiler
 
 import com.github.speky.core.specification.Sink
 import com.github.speky.core.table.ColumnResolver
+import com.github.speky.core.table.EmbeddedResolver
 import com.github.speky.core.table.TableResolver
 import com.github.speky.postgres.compiler.internal.PgTerm
 import com.github.speky.postgres.compiler.internal.WithPgTerms
 
 internal class SinkCompiler(private val compiler: PgSpecificationCompiler) :
-  WithPgTerms, ColumnUtil, TableResolver by compiler, ColumnResolver by compiler {
+  WithPgTerms, ColumnUtil, TableResolver by compiler, ColumnResolver by compiler,
+  EmbeddedResolver by compiler {
 
   fun Sink<*>.compile(): PgTerm = when (this) {
     is Sink.Insert -> insertInto() + alias.tableName() + lBracket() + columns() + rBracket() +
@@ -16,7 +18,11 @@ internal class SinkCompiler(private val compiler: PgSpecificationCompiler) :
   }
 
   private fun Sink.Insert<*>.columns(): String =
-    values.map { it.lens.propertyRef.columnsName().joinToString() }.distinct().joinToString()
+    values.map {
+      val columns = it.lens.propertyRef.columnsName()
+
+      columns.joinToString()
+    }.distinct().joinToString()
 
   @Suppress("UNCHECKED_CAST")
   private fun Sink.Insert<*>.cValues(): String {

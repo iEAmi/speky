@@ -6,6 +6,7 @@ import com.github.speky.core.specification.Alias
 import com.github.speky.core.specification.Sink
 import com.github.speky.core.specification.Specification
 import com.github.speky.core.table.ColumnResolver
+import com.github.speky.core.table.EmbeddedResolver
 import com.github.speky.core.table.Table
 import com.github.speky.core.table.TableResolver
 import java.util.concurrent.ConcurrentHashMap
@@ -13,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * Database contains [Table]. all [Table] should registered to [GenericDatabase].
  */
-abstract class GenericDatabase<R, V> : TableResolver, ColumnResolver {
+abstract class GenericDatabase<R, V> : TableResolver, ColumnResolver, EmbeddedResolver {
   private val tables = ConcurrentHashMap<ClassRef<*>, Table<*>>()
 
   /**
@@ -27,10 +28,13 @@ abstract class GenericDatabase<R, V> : TableResolver, ColumnResolver {
 
   override fun resolveColumns(prop: PropertyRef<*>): ColumnResolver.ResolveResult {
     val table = tables.values.singleOrNull { it.resolveColumns(prop).isFound() }
-      ?: return ColumnResolver.notfound()
+      ?: return ColumnResolver.notFound()
 
     return table.resolveColumns(prop)
   }
+
+  override fun isEmbedded(clsRef: ClassRef<*>): Boolean =
+    tables.values.singleOrNull { it.isEmbedded(clsRef) }?.isEmbedded(clsRef) ?: false
 
   /**
    * Compiles [spec] to [R].

@@ -4,5 +4,6 @@ data class Employee(
   val id: Long,
   val name: String,
   val family: String,
+  val address: Address,
   val jobId: Long
 )

@@ -1,5 +1,6 @@
 package com.github.speky.core.table
 
+import com.github.speky.core.ClassRef
 import com.github.speky.core.PropertyRef
 
 /**
@@ -9,7 +10,8 @@ import com.github.speky.core.PropertyRef
  *
  * @param T type of the class which it belong to
  */
-abstract class Table<T>(val tableName: String) : ColumnDefinition<T>(), Constructible<T> {
+abstract class Table<T>(val tableName: String) : ColumnDefinition<T>(), Constructible<T>,
+  EmbeddedResolver {
   private val embeds: MutableSet<Embedded<*, T>> = mutableSetOf()
 
   /**
@@ -20,17 +22,21 @@ abstract class Table<T>(val tableName: String) : ColumnDefinition<T>(), Construc
 
   override fun resolveColumns(prop: PropertyRef<*>): ColumnResolver.ResolveResult =
     super.resolveColumns(prop)
-      .ifNotfound {
-        embeds.singleOrNull { it.resolveColumns(prop).isFound() }?.resolveColumns(prop)
-          ?: ColumnResolver.notfound()
+      .ifNotFound {
+        val embed = embeds.singleOrNull { it.resolveColumns(prop).isFound() }
+
+        embed?.resolveColumns(prop) ?: ColumnResolver.notFound()
       }
-      .ifNotfound {
+      .ifNotFound {
         val embed = embeds.singleOrNull {
           it.classRef == prop.classRef && it.lens.propertyRef.name == prop.name
         }
 
-        if (embed == null) ColumnResolver.notfound() else ColumnResolver.embedded(embed)
+        if (embed == null) ColumnResolver.notFound() else ColumnResolver.embedded(embed)
       }
+
+  override fun isEmbedded(clsRef: ClassRef<*>): Boolean =
+    embeds.any { it.classRef == clsRef }
 
   @PublishedApi
   internal fun registerEmbedded(embedded: Embedded<*, T>) {

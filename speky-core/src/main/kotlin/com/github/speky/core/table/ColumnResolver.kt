@@ -28,7 +28,7 @@ interface ColumnResolver {
     /**
      * Just for simplicity.
      */
-    fun notfound(): ResolveResult = NotFound
+    fun notFound(): ResolveResult = NotFound
   }
 
   /**
@@ -41,7 +41,7 @@ interface ColumnResolver {
      *
      * @param f Supplier that invoked when this be [NotFound]
      */
-    fun ifNotfound(f: () -> ResolveResult): ResolveResult {
+    fun ifNotFound(f: () -> ResolveResult): ResolveResult {
       if (isFound()) return this
 
       return f()

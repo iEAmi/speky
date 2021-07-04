@@ -14,7 +14,7 @@ import java.sql.ResultSet
  */
 abstract class Database(private val connectionStr: String) : GenericDatabase<String, ResultSet>() {
   private val compiler: PgSpecificationCompiler by lazy {
-    PgSpecificationCompiler(this, this)
+    PgSpecificationCompiler(this, this, this)
   }
   private val executor: PgSpecificationExecutor by lazy {
     PgSpecificationExecutor(connectionStr, compiler)

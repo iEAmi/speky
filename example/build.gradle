@@ -4,4 +4,5 @@ dependencies {
   implementation(project(":speky-core"))
 
   implementation("org.postgresql:postgresql:42.2.22")
+  implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 }

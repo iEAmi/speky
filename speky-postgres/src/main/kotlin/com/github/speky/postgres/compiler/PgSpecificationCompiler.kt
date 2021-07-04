@@ -9,6 +9,7 @@ import com.github.speky.core.specification.Source
 import com.github.speky.core.specification.Specification
 import com.github.speky.core.specification.compiler.SpecificationCompiler
 import com.github.speky.core.table.ColumnResolver
+import com.github.speky.core.table.EmbeddedResolver
 import com.github.speky.core.table.TableResolver
 
 /**
@@ -19,9 +20,10 @@ import com.github.speky.core.table.TableResolver
  */
 internal class PgSpecificationCompiler(
   private val tableResolver: TableResolver,
-  private val columnResolver: ColumnResolver
+  private val columnResolver: ColumnResolver,
+  private val embeddedResolver: EmbeddedResolver
 ) : SpecificationCompiler<String>, TableResolver by tableResolver,
-  ColumnResolver by columnResolver {
+  ColumnResolver by columnResolver, EmbeddedResolver by embeddedResolver {
 
   private val sourceCompiler: SourceCompiler by lazy { SourceCompiler(this) }
   private val sinkCompiler: SinkCompiler by lazy { SinkCompiler(this) }

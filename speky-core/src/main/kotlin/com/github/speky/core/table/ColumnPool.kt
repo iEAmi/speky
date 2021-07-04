@@ -23,6 +23,6 @@ internal open class ColumnPool<T> @PublishedApi internal constructor() : ColumnR
   override fun resolveColumns(prop: PropertyRef<*>): ColumnResolver.ResolveResult {
     val column = columns.singleOrNull { it.lens.propertyRef == prop }
 
-    return if (column == null) ColumnResolver.notfound() else ColumnResolver.column(column)
+    return if (column == null) ColumnResolver.notFound() else ColumnResolver.column(column)
   }
 }
