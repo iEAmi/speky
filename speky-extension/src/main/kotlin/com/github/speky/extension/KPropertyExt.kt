@@ -115,3 +115,12 @@ inline infix fun <reified T> KProp<T, String>.endsWith(value: String): Filter.En
  */
 inline infix fun <reified T, reified R> KProp<T, @Exact R>.setTo(value: R): Value<T, R> =
   Value.of(name, value)
+
+/**
+ * Extension-function on [KProp]. simpler version of [Lens.zoom].
+ *
+ * @receiver [KProp]
+ */
+inline infix fun <reified T, reified R, reified V> KProp<T, @Exact R>.zoom(
+  other: KProp<R, V>
+): Lens<V, Lens<R, T>> =  Lens.on<T, R>(name).zoom(Lens.on(other.name))

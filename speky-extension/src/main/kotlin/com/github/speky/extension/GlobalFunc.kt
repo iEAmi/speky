@@ -1,8 +1,5 @@
 package com.github.speky.extension
 
-import com.github.speky.core.ClassRef
-import com.github.speky.core.Lens
-import com.github.speky.core.PropertyRef
 import com.github.speky.core.specification.Sink
 import com.github.speky.core.specification.Source
 import com.github.speky.core.specification.Specification
@@ -35,12 +32,7 @@ inline fun <reified T> insertOn(vararg instances: T): Sink.Insert<T> {
   val values = instances
     .flatMap { instance ->
       instance!!::class.declaredMembers.filterIsInstance<KProperty1<T, *>>()
-        .map { prop ->
-          Value(
-            Lens.Focus<Any?, T>(PropertyRef.of(prop.name, ClassRef.of<T>())),
-            prop.get(instance)
-          )
-        }
+        .map { prop -> prop setTo prop.get(instance) }
     }
 
   return Specification.insertOn(*values.toTypedArray())
